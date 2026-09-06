@@ -79,6 +79,12 @@ const links = [
         icon: "i-lucide-circle-user",
         to: "/dashboard/users",
     },
+    {
+        label: "Roles",
+        description: "Fully styled and customizable components for Nuxt.",
+        icon: "i-lucide-user-shield",
+        to: "/dashboard/roles",
+    },
 ] satisfies NavigationMenuItem[];
 
 const showModal = () => {
