@@ -15,11 +15,12 @@ const links = [
     },
     {
         label: "Overview",
-        description: "Fully styled and customizable components for Nuxt.",
+        description: "Overview page",
         icon: "i-lucide-house",
         to: "/dashboard",
         onSelect: () => {
             activePageName.value = "Overview";
+            useHead({ title: `Dashboard | ${activePageName.value}` });
         },
     },
     {
@@ -28,40 +29,42 @@ const links = [
     },
     {
         label: "Customer",
-        description: "Fully styled and customizable components for Nuxt.",
+        description: "Customer management",
         icon: "i-lucide-users",
         to: "/dashboard/customer",
         onSelect: () => {
             activePageName.value = "Customer";
+            useHead({ title: `Dashboard | ${activePageName.value}` });
         },
     },
     {
         label: "Product",
-        description:
-            "Learn how to install and configure Nuxt UI in your application.",
+        description: "Product management",
         icon: "i-lucide-package",
         to: "/dashboard/product",
         onSelect: () => {
             activePageName.value = "Product";
+            useHead({ title: `Dashboard | ${activePageName.value}` });
         },
     },
     {
         label: "Warehouse",
-        description: "Fully styled and customizable components for Nuxt.",
+        description: "Warehouse management",
         icon: "i-lucide-warehouse",
         to: "/dashboard/warehouse",
         onSelect: () => {
             activePageName.value = "Warehouse";
+            useHead({ title: `Dashboard | ${activePageName.value}` });
         },
     },
     {
         label: "UOMS",
-        description:
-            "Learn how to install and configure Nuxt UI in your application.",
+        description: "UOMS management",
         icon: "i-lucide-ruler",
         to: "/dashboard/uoms",
         onSelect: () => {
             activePageName.value = "UOMS";
+            useHead({ title: `Dashboard | ${activePageName.value}` });
         },
     },
     {
@@ -71,31 +74,31 @@ const links = [
     {
         label: "Inbound Orders",
         icon: "i-lucide-package-plus",
-        description:
-            "You have nothing to do, @nuxt/icon will handle it automatically.",
+        description: "Inbound Orders management",
         to: "/dashboard/inbound-orders",
         onSelect: () => {
             activePageName.value = "Inbound Orders";
+            useHead({ title: `Dashboard | ${activePageName.value}` });
         },
     },
     {
         label: "Receivings",
         icon: "i-lucide-clipboard-check",
-        description:
-            "Choose a primary and a neutral color from your Tailwind CSS theme.",
+        description: "Receivings management",
         to: "/dashboard/receivings",
         onSelect: () => {
             activePageName.value = "Receivings";
+            useHead({ title: `Dashboard | ${activePageName.value}` });
         },
     },
     {
         label: "Handling Unit",
         icon: "i-lucide-boxes",
-        description:
-            "You can customize components by using the `class` / `ui` props or in your app.config.ts.",
+        description: "Handling Unit management",
         to: "/dashboard/handling-unit",
         onSelect: () => {
             activePageName.value = "Handling Unit";
+            useHead({ title: `Dashboard | ${activePageName.value}` });
         },
     },
     {
@@ -104,20 +107,22 @@ const links = [
     },
     {
         label: "Users",
-        description: "Fully styled and customizable components for Nuxt.",
+        description: "Users management",
         icon: "i-lucide-circle-user",
         to: "/dashboard/users",
         onSelect: () => {
             activePageName.value = "Users";
+            useHead({ title: `Dashboard | ${activePageName.value}` });
         },
     },
     {
         label: "Roles",
-        description: "Fully styled and customizable components for Nuxt.",
+        description: "Roles management",
         icon: "i-lucide-user-shield",
         to: "/dashboard/roles",
         onSelect: () => {
             activePageName.value = "Roles";
+            useHead({ title: `Dashboard | ${activePageName.value}` });
         },
     },
 ] satisfies NavigationMenuItem[];
@@ -125,6 +130,10 @@ const links = [
 const showModal = () => {
     open.value = !open.value;
 };
+
+onBeforeMount(() => {
+    useHead({ title: `Dashboard | ${activePageName.value}` });
+});
 </script>
 <template>
     <UDashboardGroup unit="rem">
@@ -187,7 +196,7 @@ const showModal = () => {
                     </template>
 
                     <template #right>
-                        <UButton
+                        <!-- <UButton
                             v-if="activePageName !== 'Dashboard'"
                             icon="i-lucide-plus"
                             size="md"
@@ -196,7 +205,7 @@ const showModal = () => {
                             @click="showModal"
                         >
                             New {{ activePageName }}
-                        </UButton>
+                        </UButton> -->
                         <UColorModeButton />
                     </template>
                 </UDashboardNavbar>
@@ -212,7 +221,7 @@ const showModal = () => {
         </UDashboardPanel>
     </UDashboardGroup>
 
-    <UModal
+    <!-- <UModal
         v-model:open="open"
         title="Modal with footer"
         :ui="{ footer: 'justify-end' }"
@@ -230,5 +239,5 @@ const showModal = () => {
             />
             <UButton label="Submit" color="neutral" />
         </template>
-    </UModal>
+    </UModal> -->
 </template>

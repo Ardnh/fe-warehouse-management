@@ -4,9 +4,9 @@ definePageMeta({
     ssr: false,
 });
 
-useHead({
-    title: "Dashboard | Product",
-});
+// useHead({
+//     title: "Dashboard | Product",
+// });
 </script>
 
 <template>

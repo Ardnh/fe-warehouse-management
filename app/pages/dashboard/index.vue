@@ -3,9 +3,9 @@ definePageMeta({
     layout: "dashboard",
     ssr: false,
 });
-useHead({
-    title: "Dashboard | Overview",
-});
+// useHead({
+//     title: "Dashboard | Overview",
+// });
 </script>
 
 <template>
