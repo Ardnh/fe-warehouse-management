@@ -9,9 +9,10 @@ export interface BasePagination {
     pagination: Pagination;
 }
 
-export interface Params {
+export interface BaseParams {
     page: number;
     page_size: number;
+    search: string;
 }
 
 export interface Options {

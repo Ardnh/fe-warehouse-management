@@ -24,6 +24,8 @@ export const usePermissionStore = defineStore("permission", () => {
             return;
         }
 
+        permissions.value = result.data;
+        permissionsPagination.value = result.pagination;
         return result.data;
     };
 

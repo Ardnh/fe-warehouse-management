@@ -5,10 +5,10 @@ export const usePermissionsRepository = () => {
     const { api } = useApi();
     return {
         FindAll: (query: Record<string, any>) =>
-            api<PermissionsResponse>("/permissions", { query }),
+            api<PermissionsResponse>("/permission", { query }),
         FindById: (id: string) =>
-            api<PermissionsResponseById>(`/permissions/${id}`),
+            api<PermissionsResponseById>(`/permission/${id}`),
         Create: (req: any) =>
-            api<BaseResponse>(`/permissions`, { method: "POST", body: req }),
+            api<BaseResponse>(`/permission`, { method: "POST", body: req }),
     };
 };

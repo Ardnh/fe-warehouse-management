@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from "@nuxt/ui";
 import { useToast } from "@nuxt/ui/runtime/composables/useToast.js";
+import type { he } from "@nuxt/ui/runtime/locale/index.js";
 
 const route = useRoute();
 const toast = useToast();
@@ -144,7 +145,9 @@ onBeforeMount(() => {
             resizable
             class="bg-elevated/25"
             :ui="{
-                footer: 'lg:border-t lg:border-default',
+                footer: 'lg:border-t lg:border-default bg-white',
+                body: 'bg-white',
+                header: 'bg-white',
             }"
         >
             <template #header="{ collapsed }">
@@ -185,7 +188,7 @@ onBeforeMount(() => {
             </template>
         </UDashboardSidebar>
 
-        <UDashboardPanel hboardPanel id="home">
+        <UDashboardPanel hboardPanel id="home" :ui="{ body: 'bg-mist-50' }">
             <template #header>
                 <UDashboardNavbar
                     :title="activePageName"
