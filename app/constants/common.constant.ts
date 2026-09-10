@@ -1,4 +1,4 @@
-import type { Pagination, Params } from "~/models";
+import type { Pagination, BaseParams } from "~/models";
 
 export const INITIAL_PAGINATION: Pagination = {
     current_page: 1,
@@ -9,7 +9,9 @@ export const INITIAL_PAGINATION: Pagination = {
     has_previous: false,
 };
 
-export const INITIAL_PARAMS: Params = {
+export const INITIAL_PARAMS: Pick<BaseParams, "page" | "page_size"> = {
     page: 1,
     page_size: 30,
 };
+
+export type RequestOptions = { signal?: AbortSignal };

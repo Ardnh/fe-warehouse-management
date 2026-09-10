@@ -1,7 +1,6 @@
 import type { Role, Pagination, BaseParams } from "~/models";
 import { useRoleService } from "~/services";
 import { INITIAL_PAGINATION } from "~/constants";
-import { is } from "@nuxt/ui/runtime/locale/index.js";
 
 export const useRoleStore = defineStore("role", () => {
     // Instance
@@ -54,7 +53,7 @@ export const useRoleStore = defineStore("role", () => {
 
     const deleteRole = async (id: string) => {
         const result = await run("deleteRole", () =>
-            roleService.deleteItem(id),
+            roleService.deleteRole(id),
         );
         if (!result.success) {
             setError("deleteRole", result.message);
