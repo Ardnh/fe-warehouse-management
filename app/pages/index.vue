@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui";
-import { storage, authSchema } from "~/utils";
+import { AUTH_KEYS } from "~/constants";
+import { authSchema } from "~/utils";
 import type { AuthSchema } from "~/utils/schemas/auth.schema";
 
 const store = useAuthStore();
+const toast = useToast();
 
 useHead({
     title: "Sign in | WMS.GO",
@@ -18,7 +20,14 @@ const loading = ref(false);
 const showPassword = ref(false);
 
 async function onSubmit(event: FormSubmitEvent<AuthSchema>) {
-    await store.login(event.data);
+    const result = await store.login(event.data);
+    if (!result)
+        return toast.add({
+            title: "Error",
+            description: store.getError(AUTH_KEYS.login) ?? "Gagal Login",
+            color: "error",
+        });
+    await navigateTo("/dashboard");
 }
 </script>
 

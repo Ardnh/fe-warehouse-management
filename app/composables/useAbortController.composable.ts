@@ -1,7 +1,7 @@
 export const useAbortController = () => {
     const controllers = new Map<string, AbortController>();
 
-    // abort request sebelumnya dengan key yang sama, lalu buat controller baru
+    /** abort request sebelumnya dengan key yang sama, lalu buat controller baru */
     const createController = (key: string) => {
         controllers.get(key)?.abort();
         const controller = new AbortController();
@@ -11,11 +11,11 @@ export const useAbortController = () => {
 
     const getSignal = (key: string) => createController(key).signal;
 
-    // apakah controller ini masih yang terbaru untuk key tsb
+    /** apakah controller ini masih yang terbaru untuk key tsb */
     const isCurrent = (key: string, controller: AbortController) =>
         controllers.get(key) === controller;
 
-    // hapus dari map hanya kalau masih miliknya sendiri
+    /** hapus dari map hanya kalau masih miliknya sendiri */
     const release = (key: string, controller: AbortController) => {
         if (controllers.get(key) === controller) controllers.delete(key);
     };
@@ -30,7 +30,8 @@ export const useAbortController = () => {
         controllers.clear();
     };
 
+    // onScopeDispose, bukan onUnmounted — bekerja di komponen maupun Pinia store
     onScopeDispose(abortAll);
 
-    return { getSignal, createController, isCurrent, release, abort, abortAll };
+    return { createController, getSignal, isCurrent, release, abort, abortAll };
 };

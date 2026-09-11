@@ -12,8 +12,7 @@ import { USER_KEYS } from "~/constants";
 export const useUserStore = defineStore("user", () => {
     // Instance
     const userService = useUserService();
-    const { run, isLoading } = useAsync();
-    const { setError } = useAsyncError();
+    const { run, isLoading, getError, clearError } = useAsync();
 
     // State
     const users = ref<User[]>([]);
@@ -22,13 +21,10 @@ export const useUserStore = defineStore("user", () => {
 
     // Actions
     const findAllUsers = async (query: BaseParams) => {
-        const result = await run(USER_KEYS.findAll, () =>
-            userService.findAll(query),
+        const result = await run(USER_KEYS.findAll, (signal) =>
+            userService.findAll(query, { signal }),
         );
-        if (!result.success) {
-            setError("findAllUsers", result.message);
-            return;
-        }
+        if (!result) return;
 
         users.value = result.data;
         userPagination.value = result.pagination;
@@ -36,50 +32,38 @@ export const useUserStore = defineStore("user", () => {
     };
 
     const findById = async (id: string) => {
-        const result = await run(USER_KEYS.findById, () =>
-            userService.findById(id),
+        const result = await run(USER_KEYS.findById, (signal) =>
+            userService.findById(id, { signal }),
         );
-        if (!result.success) {
-            setError("findById", result.message);
-            return;
-        }
+        if (!result) return;
 
         user.value = result.data;
         return result.data;
     };
 
     const create = async (user: CreateUserRequest) => {
-        const result = await run(USER_KEYS.create, () =>
-            userService.create(user),
+        const result = await run(USER_KEYS.create, (signal) =>
+            userService.create(user, { signal }),
         );
-        if (!result.success) {
-            setError("createUser", result.message);
-            return;
-        }
+        if (!result) return;
 
         return result.message;
     };
 
     const update = async (id: string, user: UpdateUserRequest) => {
-        const result = await run(USER_KEYS.update, () =>
-            userService.update(id, user),
+        const result = await run(USER_KEYS.update, (signal) =>
+            userService.update(id, user, { signal }),
         );
-        if (!result.success) {
-            setError("updateUser", result.message);
-            return;
-        }
+        if (!result) return;
 
         return result.message;
     };
 
     const deleteUser = async (id: string) => {
-        const result = await run(USER_KEYS.remove, () =>
-            userService.deleteUser(id),
+        const result = await run(USER_KEYS.remove, (signal) =>
+            userService.deleteUser(id, { signal }),
         );
-        if (!result.success) {
-            setError("deleteUser", result.message);
-            return;
-        }
+        if (!result) return;
 
         return result.message;
     };
@@ -89,9 +73,11 @@ export const useUserStore = defineStore("user", () => {
         userPagination,
         findAllUsers,
         findById,
-        isLoading,
         create,
         update,
         deleteUser,
+        isLoading,
+        getError,
+        clearError,
     };
 });

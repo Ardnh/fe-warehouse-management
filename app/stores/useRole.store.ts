@@ -1,12 +1,11 @@
 import type { Role, Pagination, BaseParams } from "~/models";
 import { useRoleService } from "~/services";
-import { INITIAL_PAGINATION } from "~/constants";
+import { INITIAL_PAGINATION, ROLE_KEYS } from "~/constants";
 
 export const useRoleStore = defineStore("role", () => {
     // Instance
     const roleService = useRoleService();
-    const { run, isLoading } = useAsync();
-    const { setError } = useAsyncError();
+    const { run, isLoading, getError, clearError } = useAsync();
 
     // State
     const roles = ref<Role[]>([]);
@@ -16,49 +15,37 @@ export const useRoleStore = defineStore("role", () => {
 
     // Actions
     const findAllRoles = async (query: BaseParams) => {
-        const result = await run("findAllRoles", () =>
-            roleService.findAll(query),
+        const result = await run(ROLE_KEYS.findAllRoles, (signal) =>
+            roleService.findAll(query, { signal }),
         );
-        if (!result.success) {
-            setError("findAllRoles", result.message);
-            return;
-        }
-
+        if (!result) return;
         roles.value = result.data;
         rolesPagination.value = result.pagination;
         return result.data;
     };
 
     const createRole = async (req: any) => {
-        const result = await run("createRole", () => roleService.create(req));
-        if (!result.success) {
-            setError("createRole", result.message);
-            return;
-        }
-
+        const result = await run(ROLE_KEYS.createRole, (signal) =>
+            roleService.create(req, { signal }),
+        );
+        if (!result) return;
         return result.message;
     };
 
     const updateRole = async (id: string, req: any) => {
-        const result = await run("updateRole", () =>
-            roleService.update(id, req),
+        const result = await run(ROLE_KEYS.updateRole, (signal) =>
+            roleService.update(id, req, { signal }),
         );
-        if (!result.success) {
-            setError("updateRole", result.message);
-            return;
-        }
+        if (!result) return;
 
         return result.message;
     };
 
     const deleteRole = async (id: string) => {
-        const result = await run("deleteRole", () =>
-            roleService.deleteRole(id),
+        const result = await run(ROLE_KEYS.deleteRole, (signal) =>
+            roleService.deleteRole(id, { signal }),
         );
-        if (!result.success) {
-            setError("deleteRole", result.message);
-            return;
-        }
+        if (!result) return;
 
         return result.message;
     };
@@ -71,5 +58,7 @@ export const useRoleStore = defineStore("role", () => {
         roles,
         rolesPagination,
         isLoading,
+        getError,
+        clearError,
     };
 });

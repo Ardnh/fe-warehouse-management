@@ -3,6 +3,7 @@ import type { Row } from "@tanstack/vue-table";
 import type { BaseParams, User } from "~/models";
 import DeleteConfirmationModal from "~/components/modal/DeleteConfirmationModal.vue";
 import type { UserFormPayload } from "~/components/form/user/FormCreateEditUser.vue";
+import { USER_KEYS } from "~/constants";
 
 const userStore = useUserStore();
 const roleStore = useRoleStore();
@@ -27,11 +28,6 @@ const query = reactive<BaseParams>({
 
 const statusColor = (status: string) =>
     status === "ACTIVE" ? "success" : "neutral";
-
-const formatDate = (value: string) =>
-    new Intl.DateTimeFormat("id-ID", {
-        dateStyle: "medium",
-    }).format(new Date(value));
 
 const columns = [
     {
@@ -232,11 +228,19 @@ definePageMeta({
     ssr: false,
 });
 
+watch(
+    () => userStore.isLoading(USER_KEYS.findAll),
+    (loading) => {
+        console.log("loading state ");
+        console.log(loading);
+    },
+);
+
 useHead({ title: "Dashboard | Users" });
 </script>
 
 <template>
-    <div class="flex h-full min-h-0 flex-col gap-5 p-4 sm:p-6">
+    <div class="flex h-full min-h-0 flex-col gap-5">
         <div
             class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
         >
@@ -278,7 +282,7 @@ useHead({ title: "Dashboard | Users" });
             <UTable
                 :data="users"
                 :columns="columns"
-                :loading="userStore.isLoading('findAllUsers')"
+                :loading="userStore.isLoading(USER_KEYS.findAll)"
                 loading-color="primary"
                 loading-animation="carousel"
                 class="min-w-190"

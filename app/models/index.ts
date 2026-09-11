@@ -4,3 +4,5 @@ export * from "./common.model";
 export * from "./role.model";
 export * from "./auth.model";
 export * from "./user.model";
+export * from "./warehouse.model";
+export * from "./uom.model";
