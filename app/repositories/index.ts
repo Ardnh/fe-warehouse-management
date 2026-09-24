@@ -4,3 +4,6 @@ export * from "./useAuth.repository";
 export * from "./useUser.repository";
 export * from "./useWarehouse.repository";
 export * from "./useUom.repository";
+export * from "./useLocation.repository";
+export * from "./useCustomer.repository";
+export * from "./useProduct.repository";

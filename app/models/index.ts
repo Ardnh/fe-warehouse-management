@@ -7,3 +7,6 @@ export * from "./user.model";
 export * from "./warehouse.model";
 export * from "./uom.model";
 export * from "./inbound-order.model";
+export * from "./location.model";
+export * from "./customer.model";
+export * from "./product.model";

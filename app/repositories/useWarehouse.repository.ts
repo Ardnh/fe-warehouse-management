@@ -11,25 +11,32 @@ export const useWarehouseRepository = () => {
     const { api } = useApi();
 
     return {
-        FindAll: (query: Record<string, unknown>, opts?: RequestOptions) =>
-            api<WarehouseResponse>("/warehouse", { query, signal: opts?.signal }),
-        FindById: (id: string, opts?: RequestOptions) =>
+        findAll: (query: Record<string, unknown>, opts?: RequestOptions) =>
+            api<WarehouseResponse>("/warehouse", {
+                query,
+                signal: opts?.signal,
+            }),
+        findById: (id: string, opts?: RequestOptions) =>
             api<WarehouseByIdResponse>(`/warehouse/${id}`, {
                 signal: opts?.signal,
             }),
-        Create: (req: CreateWarehouseRequest, opts?: RequestOptions) =>
+        create: (req: CreateWarehouseRequest, opts?: RequestOptions) =>
             api<BaseResponse>("/warehouse", {
                 method: "POST",
                 body: req,
                 signal: opts?.signal,
             }),
-        Update: (id: string, req: UpdateWarehouseRequest, opts?: RequestOptions) =>
+        update: (
+            id: string,
+            req: UpdateWarehouseRequest,
+            opts?: RequestOptions,
+        ) =>
             api<BaseResponse>(`/warehouse/${id}`, {
                 method: "PUT",
                 body: req,
                 signal: opts?.signal,
             }),
-        Delete: (id: string, opts?: RequestOptions) =>
+        delete: (id: string, opts?: RequestOptions) =>
             api<BaseResponse>(`/warehouse/${id}`, {
                 method: "DELETE",
                 signal: opts?.signal,

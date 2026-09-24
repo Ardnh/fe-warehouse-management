@@ -3,3 +3,6 @@ export * from "./useUser.store";
 export * from "./useAuth.store";
 export * from "./useWarehouse.store";
 export * from "./useUom.store";
+export * from "./useLocation.store";
+export * from "./useCustomer.store";
+export * from "./useProduct.store";

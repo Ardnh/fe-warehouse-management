@@ -4,3 +4,6 @@ export * from "./useAuth.service";
 export * from "./useUser.service";
 export * from "./useWarehouse.service";
 export * from "./useUom.service";
+export * from "./useLocation.service";
+export * from "./useCustomer.service";
+export * from "./useProduct.service";

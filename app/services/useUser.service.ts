@@ -8,20 +8,32 @@ import { useUserRepository } from "~/repositories";
 import type { RequestOptions } from "~/constants";
 
 export const useUserService = () => {
-    const { FindAll, FindById, Create, Update, Delete } = useUserRepository();
+    const {
+        findAll: findAllRequest,
+        findById: findByIdRequest,
+        findProfile: findProfileRequest,
+        create: createRequest,
+        update: updateRequest,
+        delete: deleteRequest,
+    } = useUserRepository();
 
     const findAll = async (params: BaseParams, opts?: RequestOptions) => {
-        const result = await FindAll(cleanObject(params), opts);
+        const result = await findAllRequest(cleanObject(params), opts);
         return result;
     };
 
     const findById = async (id: string, opts?: RequestOptions) => {
-        const result = await FindById(id, opts);
+        const result = await findByIdRequest(id, opts);
+        return result;
+    };
+
+    const findProfile = async (opts?: RequestOptions) => {
+        const result = await findProfileRequest(opts);
         return result;
     };
 
     const create = async (req: CreateUserRequest, opts?: RequestOptions) => {
-        const result = await Create(req, opts);
+        const result = await createRequest(req, opts);
         return result;
     };
 
@@ -30,18 +42,19 @@ export const useUserService = () => {
         req: UpdateUserRequest,
         opts?: RequestOptions,
     ) => {
-        const result = await Update(id, req, opts);
+        const result = await updateRequest(id, req, opts);
         return result;
     };
 
     const deleteUser = async (id: string, opts?: RequestOptions) => {
-        const result = await Delete(id, opts);
+        const result = await deleteRequest(id, opts);
         return result;
     };
 
     return {
         findAll,
         findById,
+        findProfile,
         create,
         update,
         deleteUser,

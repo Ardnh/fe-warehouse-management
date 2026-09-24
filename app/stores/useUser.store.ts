@@ -5,6 +5,7 @@ import type {
     Pagination,
     CreateUserRequest,
     UpdateUserRequest,
+    UserProfile,
 } from "~/models";
 import { INITIAL_PAGINATION } from "~/constants";
 import { USER_KEYS } from "~/constants";
@@ -17,6 +18,8 @@ export const useUserStore = defineStore("user", () => {
     // State
     const users = ref<User[]>([]);
     const user = ref<User | null>(null);
+    const userProfile = ref<UserProfile | null>(null);
+
     const userPagination = ref<Pagination>({ ...INITIAL_PAGINATION });
 
     // Actions
@@ -38,6 +41,16 @@ export const useUserStore = defineStore("user", () => {
         if (!result) return;
 
         user.value = result.data;
+        return result.data;
+    };
+
+    const findProfile = async () => {
+        const result = await run(USER_KEYS.findProfile, (signal) =>
+            userService.findProfile({ signal }),
+        );
+        if (!result) return;
+
+        userProfile.value = result.data;
         return result.data;
     };
 
@@ -70,9 +83,11 @@ export const useUserStore = defineStore("user", () => {
 
     return {
         users,
+        userProfile,
         userPagination,
         findAllUsers,
         findById,
+        findProfile,
         create,
         update,
         deleteUser,

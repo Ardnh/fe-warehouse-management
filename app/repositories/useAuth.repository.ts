@@ -1,4 +1,4 @@
-import type { AuthResponse } from "../models";
+import type { AuthResponse, AuthLoginRequest } from "../models";
 import type { RequestOptions } from "../constants";
 
 export const useAuthRepository = () => {
@@ -6,8 +6,8 @@ export const useAuthRepository = () => {
     const { $api } = useNuxtApp();
 
     return {
-        Login: async (
-            req: Record<string, any>,
+        login: async (
+            req: AuthLoginRequest,
             opts?: RequestOptions,
         ): Promise<AuthResponse> =>
             await $api("/login", {

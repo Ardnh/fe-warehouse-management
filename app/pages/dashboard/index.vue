@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import { useUserStore } from "#imports";
+import { onMounted } from "vue";
+
+const userStore = useUserStore();
+const { userProfile } = storeToRefs(userStore);
+
 definePageMeta({
     layout: "dashboard",
     ssr: false,
@@ -6,10 +12,14 @@ definePageMeta({
 // useHead({
 //     title: "Dashboard | Overview",
 // });
+
+onMounted(async () => {
+    await userStore.findProfile();
+});
 </script>
 
 <template>
-    <div>this is dashboard page</div>
+    <div>{{ userProfile }}</div>
 </template>
 
 <style lang="scss" scoped></style>

@@ -59,6 +59,16 @@ const links = [
         },
     },
     {
+        label: "Locations",
+        description: "Location management",
+        icon: "i-lucide-map-pin",
+        to: "/dashboard/location",
+        onSelect: () => {
+            activePageName.value = "Locations";
+            useHead({ title: `Dashboard | ${activePageName.value}` });
+        },
+    },
+    {
         label: "UOMS",
         description: "UOMS management",
         icon: "i-lucide-ruler",
@@ -175,11 +185,9 @@ onBeforeMount(() => {
 
             <template #footer="{ collapsed }">
                 <UButton
-                    :avatar="{
-                        src: 'https://github.com/benjamincanac.png',
-                        loading: 'lazy' as const,
-                    }"
-                    :label="collapsed ? undefined : 'Benjamin'"
+                    to="/dashboard/profile"
+                    icon="i-lucide-circle-user-round"
+                    :label="collapsed ? undefined : 'My profile'"
                     color="neutral"
                     variant="ghost"
                     class="w-full"

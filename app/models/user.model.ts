@@ -36,3 +36,44 @@ export interface UpdateUserRequest {
     status: string;
     role_ids: string[];
 }
+
+export interface UserProfileResponse extends BaseResponse {
+    data: UserProfile;
+}
+
+export interface UserProfile {
+    id: string;
+    username: string;
+    email: string;
+    full_name: string;
+    status: string;
+    location: ProfileLocation;
+    roles: ProfileRoles;
+    permissions: string[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface ProfileLocation {
+    id: string;
+    code: string;
+    name: string;
+    type: string;
+    address: string;
+    city: string;
+    province: string;
+    postal_code: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface ProfileRoles {
+    id: string;
+    code: string;
+    name: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
