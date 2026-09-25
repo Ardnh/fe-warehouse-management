@@ -6,3 +6,4 @@ export * from "./useUom.store";
 export * from "./useLocation.store";
 export * from "./useCustomer.store";
 export * from "./useProduct.store";
+export * from "./useInboundOrder.store";
