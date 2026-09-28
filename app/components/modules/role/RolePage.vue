@@ -124,7 +124,7 @@ onMounted(async () => {
             pageSize: rolesPagination.page_size,
         }"
         :ui="{
-            root: 'bg-white mt-3 border border-gray-200 rounded-lg',
+            root: 'bg-default mt-3 border border-default rounded-lg',
         }"
     />
 

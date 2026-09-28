@@ -8,3 +8,4 @@ export * from "./useLocation.service";
 export * from "./useCustomer.service";
 export * from "./useProduct.service";
 export * from "./useInboundOrder.service";
+export * from "./useZone.service";

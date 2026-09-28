@@ -8,3 +8,4 @@ export * from "./useLocation.repository";
 export * from "./useCustomer.repository";
 export * from "./useProduct.repository";
 export * from "./useInboundOrder.repository";
+export * from "./useZone.repository";

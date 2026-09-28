@@ -3,6 +3,7 @@ import type { Row } from "@tanstack/vue-table";
 import type { BaseParams, Customer, InboundOrder, Product } from "~/models";
 import type { InboundOrderFormPayload } from "~/components/form/inbound-order/FormCreateEditInboundOrder.vue";
 import DeleteConfirmationModal from "~/components/modal/DeleteConfirmationModal.vue";
+import { watchDebounced } from "@vueuse/core";
 const store = useInboundOrderStore();
 const customerStore = useCustomerStore();
 const productStore = useProductStore();
@@ -198,17 +199,17 @@ function pageChange(page: number) {
     query.page = page;
     load();
 }
-watch(search, (value) => {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => {
+
+watchDebounced(
+    search,
+    (value) => {
         query.search = value.trim();
         query.page = 1;
         load();
-    }, 300);
-});
-onBeforeUnmount(() => {
-    if (timer) clearTimeout(timer);
-});
+    },
+    { debounce: 300 },
+);
+
 onMounted(async () => {
     await Promise.all([load(), loadOptions()]);
 });
@@ -250,7 +251,7 @@ useHead({ title: "Dashboard | Inbound Orders" });
             <p class="text-sm text-muted">{{ pagination.total_items }} order</p>
         </div>
         <div
-            class="min-h-0 flex-1 overflow-auto rounded-lg border border-default bg-white dark:bg-neutral-900"
+            class="min-h-0 flex-1 overflow-auto rounded-lg border border-default bg-default"
         >
             <UTable
                 :data="orders"

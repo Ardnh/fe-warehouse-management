@@ -45,7 +45,7 @@ const onConfirm = () => {
                         class="size-5 text-red-600 dark:text-red-400"
                     />
                 </div>
-                <p class="text-sm text-gray-700 dark:text-gray-300">
+                <p class="text-sm text-default">
                     <template v-if="itemName">
                         Apakah Anda yakin ingin menghapus
                         <span class="font-semibold">"{{ itemName }}"</span>?

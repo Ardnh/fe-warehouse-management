@@ -7,3 +7,4 @@ export * from "./useLocation.store";
 export * from "./useCustomer.store";
 export * from "./useProduct.store";
 export * from "./useInboundOrder.store";
+export * from "./useZone.store";

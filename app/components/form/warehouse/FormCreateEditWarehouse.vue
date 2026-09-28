@@ -1,62 +1,58 @@
 <script setup lang="ts">
 import * as z from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import type { Warehouse } from "~/models";
+import type {
+    CreateWarehouseRequest,
+    Location,
+    UpdateWarehouseRequest,
+    Warehouse,
+} from "~/models";
 
 const open = defineModel<boolean>("open", { default: false });
 const emit = defineEmits<{
     close: [];
     submit: [{ payload: WarehouseFormPayload }];
 }>();
-
 const props = withDefaults(
     defineProps<{
         data?: Warehouse;
+        locations?: Location[];
         loading?: boolean;
     }>(),
-    { loading: false },
+    { locations: () => [], loading: false },
 );
-
 const formId = useId();
 const isEditing = computed(() => Boolean(props.data));
-
 const schema = z.object({
-    code: z
-        .string()
-        .min(1, "Kode wajib diisi")
-        .max(30, "Kode maksimal 30 karakter")
-        .regex(/^[A-Z0-9_-]+$/, "Gunakan huruf kapital, angka, underscore, atau strip"),
-    name: z.string().min(1, "Nama warehouse wajib diisi").max(100),
-    address: z.string().min(1, "Alamat wajib diisi").max(255),
+    location_id: z.string().min(1, "Location wajib dipilih"),
     status: z.enum(["ACTIVE", "INACTIVE"]),
 });
-
 type Schema = z.output<typeof schema>;
-export type WarehouseFormPayload = Schema;
-
-const state = reactive<Schema>({
-    code: "",
-    name: "",
-    address: "",
-    status: "ACTIVE",
-});
-
+export type WarehouseFormPayload =
+    CreateWarehouseRequest | UpdateWarehouseRequest;
+const state = reactive<Schema>({ location_id: "", status: "ACTIVE" });
+const locationOptions = computed(() =>
+    props.locations.map((location) => ({
+        label: `${location.code} · ${location.name}`,
+        value: location.id,
+    })),
+);
 const statusOptions = [
     { label: "Aktif", value: "ACTIVE" },
     { label: "Nonaktif", value: "INACTIVE" },
 ];
-
 function resetState() {
-    state.code = props.data?.code ?? "";
-    state.name = props.data?.name ?? "";
-    state.address = props.data?.address ?? "";
+    state.location_id =
+        props.data?.location_id ?? props.data?.location?.id ?? "";
     state.status = (props.data?.status ?? "ACTIVE") as Schema["status"];
 }
-
 function onSubmit(event: FormSubmitEvent<Schema>) {
-    emit("submit", { payload: event.data });
+    emit("submit", {
+        payload: props.data
+            ? { status: event.data.status, location_id: event.data.location_id }
+            : event.data,
+    });
 }
-
 watch(
     () => [open.value, props.data] as const,
     ([isOpen]) => {
@@ -64,12 +60,10 @@ watch(
     },
     { immediate: true },
 );
-
 watch(open, (value) => {
     if (!value) emit("close");
 });
 </script>
-
 <template>
     <UModal
         v-model:open="open"
@@ -85,63 +79,38 @@ watch(open, (value) => {
                 class="space-y-4"
                 @submit="onSubmit"
             >
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <UFormField label="Kode" name="code" required>
-                        <UInput
-                            v-model="state.code"
-                            class="w-full"
-                            placeholder="WH-JKT-01"
-                            :disabled="loading"
-                        />
-                    </UFormField>
-                    <UFormField label="Nama" name="name" required>
-                        <UInput
-                            v-model="state.name"
-                            class="w-full"
-                            placeholder="Warehouse Jakarta"
-                            :disabled="loading"
-                        />
-                    </UFormField>
-                </div>
-
-                <UFormField label="Alamat" name="address" required>
-                    <UTextarea
-                        v-model="state.address"
+                <UFormField label="Location" name="location_id" required
+                    ><USelectMenu
+                        v-model="state.location_id"
+                        :items="locationOptions"
+                        value-key="value"
                         class="w-full"
-                        :rows="3"
-                        placeholder="Alamat lengkap warehouse"
+                        placeholder="Pilih location"
                         :disabled="loading"
-                    />
-                </UFormField>
-
-                <UFormField label="Status" name="status" required>
-                    <USelect
+                /></UFormField>
+                <UFormField label="Status" name="status" required
+                    ><USelect
                         v-model="state.status"
                         :items="statusOptions"
                         value-key="value"
                         class="w-full"
                         :disabled="loading"
-                    />
-                </UFormField>
+                /></UFormField>
             </UForm>
         </template>
-
-        <template #footer="{ close }">
-            <UButton
+        <template #footer="{ close }"
+            ><UButton
                 label="Batal"
                 color="neutral"
                 variant="soft"
                 :disabled="loading"
-                @click="close"
-            />
-            <UButton
+                @click="close" /><UButton
                 :label="isEditing ? 'Simpan perubahan' : 'Buat warehouse'"
                 color="primary"
                 icon="i-lucide-save"
                 type="submit"
                 :form="formId"
                 :loading="loading"
-            />
-        </template>
+        /></template>
     </UModal>
 </template>

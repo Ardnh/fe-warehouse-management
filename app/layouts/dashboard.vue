@@ -5,6 +5,7 @@ import type { he } from "@nuxt/ui/runtime/locale/index.js";
 
 const route = useRoute();
 const toast = useToast();
+const authStore = useAuthStore();
 
 const open = ref(false);
 const activePageName = ref("Dashboard");
@@ -142,6 +143,10 @@ const showModal = () => {
     open.value = !open.value;
 };
 
+async function onLogout() {
+    await authStore.logout();
+}
+
 onBeforeMount(() => {
     useHead({ title: `Dashboard | ${activePageName.value}` });
 });
@@ -155,9 +160,9 @@ onBeforeMount(() => {
             resizable
             class="bg-elevated/25"
             :ui="{
-                footer: 'lg:border-t lg:border-default bg-white',
-                body: 'bg-white',
-                header: 'bg-white',
+                footer: 'lg:border-t lg:border-default bg-default',
+                body: 'bg-default',
+                header: 'bg-default',
             }"
         >
             <template #header="{ collapsed }">
@@ -184,19 +189,30 @@ onBeforeMount(() => {
             </template>
 
             <template #footer="{ collapsed }">
-                <UButton
-                    to="/dashboard/profile"
-                    icon="i-lucide-circle-user-round"
-                    :label="collapsed ? undefined : 'My profile'"
-                    color="neutral"
-                    variant="ghost"
-                    class="w-full"
-                    :block="collapsed"
-                />
+                <div class="flex w-full flex-col gap-1">
+                    <UButton
+                        to="/dashboard/profile"
+                        icon="i-lucide-circle-user-round"
+                        :label="collapsed ? undefined : 'My profile'"
+                        color="neutral"
+                        variant="ghost"
+                        class="w-full"
+                        :block="collapsed"
+                    />
+                    <UButton
+                        icon="i-lucide-log-out"
+                        :label="collapsed ? undefined : 'Sign out'"
+                        color="error"
+                        variant="ghost"
+                        class="w-full"
+                        :block="collapsed"
+                        @click="onLogout"
+                    />
+                </div>
             </template>
         </UDashboardSidebar>
 
-        <UDashboardPanel hboardPanel id="home" :ui="{ body: 'bg-mist-50' }">
+        <UDashboardPanel hboardPanel id="home" :ui="{ body: 'bg-muted' }">
             <template #header>
                 <UDashboardNavbar
                     :title="activePageName"

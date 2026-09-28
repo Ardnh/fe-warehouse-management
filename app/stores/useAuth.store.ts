@@ -19,8 +19,15 @@ export const useAuthStore = defineStore("auth", () => {
         return result;
     };
 
+    const logout = async () => {
+        storage.remove("token");
+        storage.remove("expire_date");
+        await navigateTo("/");
+    };
+
     return {
         login,
+        logout,
         isLoading,
         getError,
     };

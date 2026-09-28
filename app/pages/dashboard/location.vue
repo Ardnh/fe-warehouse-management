@@ -260,7 +260,7 @@ useHead({ title: "Dashboard | Locations" });
         </div>
 
         <div
-            class="min-h-0 flex-1 overflow-auto rounded-lg border border-default bg-white dark:bg-neutral-900"
+            class="min-h-0 flex-1 overflow-auto rounded-lg border border-default bg-default"
         >
             <UTable
                 :data="locations"
