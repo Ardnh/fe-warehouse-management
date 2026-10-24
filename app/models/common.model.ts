@@ -1,21 +1,20 @@
-import type { Pagination } from "./pagination.model";
+import type { Pagination } from './pagination.model'
 
 export interface BaseResponse {
-    success: boolean;
-    message: string;
+    success: boolean
+    message: string
 }
 
 export interface BasePagination {
-    pagination: Pagination;
+    pagination: Pagination
 }
 
 export interface BaseParams {
-    page: number;
-    page_size: number;
-    search: string;
+    page: number
+    page_size: number
 }
 
 export interface Options {
-    label: string;
-    value: string;
+    label: string
+    value: string
 }

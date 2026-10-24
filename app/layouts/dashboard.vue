@@ -1,155 +1,155 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from "@nuxt/ui";
-import { useToast } from "@nuxt/ui/runtime/composables/useToast.js";
-import type { he } from "@nuxt/ui/runtime/locale/index.js";
+import type { NavigationMenuItem } from '@nuxt/ui'
+import { useToast } from '@nuxt/ui/runtime/composables/useToast.js'
+import { useAuthStore } from '~/stores'
 
-const route = useRoute();
-const toast = useToast();
-const authStore = useAuthStore();
+const route = useRoute()
+const toast = useToast()
+const authStore = useAuthStore()
 
-const open = ref(false);
-const activePageName = ref("Dashboard");
+const open = ref(false)
+const activePageName = ref('Dashboard')
 
 const links = [
     {
-        type: "label",
-        label: "Analytics",
+        type: 'label',
+        label: 'Analytics',
     },
     {
-        label: "Overview",
-        description: "Overview page",
-        icon: "i-lucide-house",
-        to: "/dashboard",
+        label: 'Overview',
+        description: 'Overview page',
+        icon: 'i-lucide-house',
+        to: '/dashboard',
         onSelect: () => {
-            activePageName.value = "Overview";
-            useHead({ title: `Dashboard | ${activePageName.value}` });
+            activePageName.value = 'Overview'
+            useHead({ title: `Dashboard | ${activePageName.value}` })
         },
     },
     {
-        type: "label",
-        label: "Master Data",
+        type: 'label',
+        label: 'Master Data',
     },
     {
-        label: "Customer",
-        description: "Customer management",
-        icon: "i-lucide-users",
-        to: "/dashboard/customer",
+        label: 'Customer',
+        description: 'Customer management',
+        icon: 'i-lucide-users',
+        to: '/dashboard/customer',
         onSelect: () => {
-            activePageName.value = "Customer";
-            useHead({ title: `Dashboard | ${activePageName.value}` });
+            activePageName.value = 'Customer'
+            useHead({ title: `Dashboard | ${activePageName.value}` })
         },
     },
     {
-        label: "Product",
-        description: "Product management",
-        icon: "i-lucide-package",
-        to: "/dashboard/product",
+        label: 'Product',
+        description: 'Product management',
+        icon: 'i-lucide-package',
+        to: '/dashboard/product',
         onSelect: () => {
-            activePageName.value = "Product";
-            useHead({ title: `Dashboard | ${activePageName.value}` });
+            activePageName.value = 'Product'
+            useHead({ title: `Dashboard | ${activePageName.value}` })
         },
     },
     {
-        label: "Warehouse",
-        description: "Warehouse management",
-        icon: "i-lucide-warehouse",
-        to: "/dashboard/warehouse",
+        label: 'Warehouse',
+        description: 'Warehouse management',
+        icon: 'i-lucide-warehouse',
+        to: '/dashboard/warehouse',
         onSelect: () => {
-            activePageName.value = "Warehouse";
-            useHead({ title: `Dashboard | ${activePageName.value}` });
+            activePageName.value = 'Warehouse'
+            useHead({ title: `Dashboard | ${activePageName.value}` })
         },
     },
     {
-        label: "Locations",
-        description: "Location management",
-        icon: "i-lucide-map-pin",
-        to: "/dashboard/location",
+        label: 'Locations',
+        description: 'Location management',
+        icon: 'i-lucide-map-pin',
+        to: '/dashboard/location',
         onSelect: () => {
-            activePageName.value = "Locations";
-            useHead({ title: `Dashboard | ${activePageName.value}` });
+            activePageName.value = 'Locations'
+            useHead({ title: `Dashboard | ${activePageName.value}` })
         },
     },
     {
-        label: "UOMS",
-        description: "UOMS management",
-        icon: "i-lucide-ruler",
-        to: "/dashboard/uoms",
+        label: 'UOMS',
+        description: 'UOMS management',
+        icon: 'i-lucide-ruler',
+        to: '/dashboard/uoms',
         onSelect: () => {
-            activePageName.value = "UOMS";
-            useHead({ title: `Dashboard | ${activePageName.value}` });
+            activePageName.value = 'UOMS'
+            useHead({ title: `Dashboard | ${activePageName.value}` })
         },
     },
     {
-        type: "label",
-        label: "Transactions",
+        type: 'label',
+        label: 'Transactions',
     },
     {
-        label: "Inbound Orders",
-        icon: "i-lucide-package-plus",
-        description: "Inbound Orders management",
-        to: "/dashboard/inbound-orders",
+        label: 'Inbound Orders',
+        icon: 'i-lucide-package-plus',
+        description: 'Inbound Orders management',
+        to: '/dashboard/inbound-orders',
         onSelect: () => {
-            activePageName.value = "Inbound Orders";
-            useHead({ title: `Dashboard | ${activePageName.value}` });
+            activePageName.value = 'Inbound Orders'
+            useHead({ title: `Dashboard | ${activePageName.value}` })
         },
     },
     {
-        label: "Receivings",
-        icon: "i-lucide-clipboard-check",
-        description: "Receivings management",
-        to: "/dashboard/receivings",
+        label: 'Receivings',
+        icon: 'i-lucide-clipboard-check',
+        description: 'Receivings management',
+        to: '/dashboard/receivings',
         onSelect: () => {
-            activePageName.value = "Receivings";
-            useHead({ title: `Dashboard | ${activePageName.value}` });
+            activePageName.value = 'Receivings'
+            useHead({ title: `Dashboard | ${activePageName.value}` })
         },
     },
     {
-        label: "Handling Unit",
-        icon: "i-lucide-boxes",
-        description: "Handling Unit management",
-        to: "/dashboard/handling-unit",
+        label: 'Handling Unit',
+        icon: 'i-lucide-boxes',
+        description: 'Handling Unit management',
+        to: '/dashboard/handling-unit',
         onSelect: () => {
-            activePageName.value = "Handling Unit";
-            useHead({ title: `Dashboard | ${activePageName.value}` });
+            activePageName.value = 'Handling Unit'
+            useHead({ title: `Dashboard | ${activePageName.value}` })
         },
     },
     {
-        type: "label",
-        label: "Users Management",
+        type: 'label',
+        label: 'Users Management',
     },
     {
-        label: "Users",
-        description: "Users management",
-        icon: "i-lucide-circle-user",
-        to: "/dashboard/users",
+        label: 'Users',
+        description: 'Users management',
+        icon: 'i-lucide-circle-user',
+        to: '/dashboard/users',
         onSelect: () => {
-            activePageName.value = "Users";
-            useHead({ title: `Dashboard | ${activePageName.value}` });
+            activePageName.value = 'Users'
+            useHead({ title: `Dashboard | ${activePageName.value}` })
         },
     },
     {
-        label: "Roles",
-        description: "Roles management",
-        icon: "i-lucide-user-shield",
-        to: "/dashboard/roles",
+        label: 'Roles',
+        description: 'Roles management',
+        icon: 'i-lucide-user-shield',
+        to: '/dashboard/roles',
         onSelect: () => {
-            activePageName.value = "Roles";
-            useHead({ title: `Dashboard | ${activePageName.value}` });
+            activePageName.value = 'Roles'
+            useHead({ title: `Dashboard | ${activePageName.value}` })
         },
     },
-] satisfies NavigationMenuItem[];
+] satisfies NavigationMenuItem[]
 
 const showModal = () => {
-    open.value = !open.value;
-};
+    open.value = !open.value
+}
 
 async function onLogout() {
-    await authStore.logout();
+    await authStore.logout()
 }
 
 onBeforeMount(() => {
-    useHead({ title: `Dashboard | ${activePageName.value}` });
-});
+    useHead({ title: `Dashboard | ${activePageName.value}` })
+})
 </script>
 <template>
     <UDashboardGroup unit="rem">
@@ -166,26 +166,13 @@ onBeforeMount(() => {
             }"
         >
             <template #header="{ collapsed }">
-                <div
-                    class="font-extrabold text-4xl flex justify-center text-amber-500 italic w-full"
-                >
-                    WMS.GO
-                </div>
+                <div class="font-extrabold text-4xl flex justify-center text-amber-500 italic w-full">WMS.GO</div>
             </template>
 
             <template #default="{ collapsed }">
-                <UDashboardSearchButton
-                    :collapsed="collapsed"
-                    class="bg-transparent ring-default"
-                />
+                <UDashboardSearchButton :collapsed="collapsed" class="bg-transparent ring-default" />
 
-                <UNavigationMenu
-                    :collapsed="collapsed"
-                    :items="links"
-                    orientation="vertical"
-                    tooltip
-                    popover
-                />
+                <UNavigationMenu :collapsed="collapsed" :items="links" orientation="vertical" tooltip popover />
             </template>
 
             <template #footer="{ collapsed }">
@@ -214,10 +201,7 @@ onBeforeMount(() => {
 
         <UDashboardPanel hboardPanel id="home" :ui="{ body: 'bg-muted' }">
             <template #header>
-                <UDashboardNavbar
-                    :title="activePageName"
-                    :ui="{ right: 'gap-3' }"
-                >
+                <UDashboardNavbar :title="activePageName" :ui="{ right: 'gap-3' }">
                     <template #leading>
                         <UDashboardSidebarCollapse />
                     </template>

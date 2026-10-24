@@ -1,8 +1,8 @@
 <script setup lang="ts">
 definePageMeta({
-    layout: "dashboard",
-    ssr: false,
-});
+   layout: 'dashboard',
+   ssr: false,
+})
 
 // useHead({
 //     title: "Dashboard | Handling Unit",
@@ -10,5 +10,5 @@ definePageMeta({
 </script>
 
 <template>
-    <div>Handling Unit</div>
+   <div>Handling Unit</div>
 </template>

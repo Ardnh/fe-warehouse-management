@@ -1,39 +1,37 @@
-import type { BaseResponse, BasePagination } from "./common.model";
+import type { BaseResponse, BasePagination, BaseParams } from './common.model'
 
 export interface PermissionsResponse extends BaseResponse, BasePagination {
-    data: Permission[];
+    data: Permission[]
 }
 
 export interface PermissionsResponseById {
-    success: boolean;
-    message: string;
-    data: Permission;
+    success: boolean
+    message: string
+    data: Permission
 }
 
 export interface Permission {
-    group: string;
-    action: PermissionAction[];
+    id: string
+    resource: string
+    action: string
+    description: string
 }
 
-export interface PermissionAction {
-    id: string;
-    resource: string;
-    action: string;
-    description: string;
-}
+export type PermissionGroup = {
+    label: string
+    value: string
+}[]
 
 // Request
 export interface CreateUpdatePermissionRequest {
-    resource: string;
-    action: string;
-    description: string;
+    resource: string
+    action: string
+    description: string
 }
 
 // Params
-export interface FindAllPermissionParams {
-    page: number;
-    page_size: number;
-    search: string;
-    sort_by: string;
-    sort_dir: string;
+export interface FindAllPermissionParams extends BaseParams {
+    search?: string
+    sort_by?: string
+    sort_dir?: string
 }

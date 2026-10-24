@@ -1,56 +1,64 @@
-import type { Role, Pagination, BaseParams, CreateRoleRequest, UpdateRoleRequest } from "~/models";
-import { useRoleService } from "~/services";
-import { INITIAL_PAGINATION, ROLE_KEYS } from "~/constants";
+import type { Role, Pagination, BaseParams, CreateRoleRequest, UpdateRoleRequest } from '~/models'
+import { useRoleService } from '~/services'
+import { INITIAL_PAGINATION, ROLE_KEYS } from '~/constants'
 
-export const useRoleStore = defineStore("role", () => {
-   // Instance
-   const roleService = useRoleService();
-   const { run, isLoading, getError, clearError } = useAsync();
+export const useRoleStore = defineStore('role', () => {
+    // Instance
+    const roleService = useRoleService()
+    const { run, isLoading, getError, clearError } = useAsync()
 
-   // State
-   const roles = ref<Role[]>([]);
-   const rolesPagination = ref<Pagination>({ ...INITIAL_PAGINATION });
+    // State
+    const roles = ref<Role[]>([])
+    const rolesPagination = ref<Pagination>({ ...INITIAL_PAGINATION })
 
-   // Getters
+    // Getters
 
-   // Actions
-   const findAllRoles = async (query: BaseParams) => {
-      const result = await run(ROLE_KEYS.findAllRoles, (signal) => roleService.findAll(query, { signal }));
-      if (!result) return;
-      roles.value = result.data;
-      rolesPagination.value = result.pagination;
-      return result.data;
-   };
+    // Actions
+    const findAllRoles = async (query: BaseParams) => {
+        const result = await run(ROLE_KEYS.findAllRoles, (signal) => roleService.findAll(query, { signal }))
+        if (!result) return
+        roles.value = result.data
+        rolesPagination.value = result.pagination
+        return result.data
+    }
 
-   const createRole = async (req: CreateRoleRequest) => {
-      const result = await run(ROLE_KEYS.createRole, (signal) => roleService.create(req, { signal }));
-      if (!result) return;
-      return result.message;
-   };
+    const findRoleById = async (id: string) => {
+        const result = await run(ROLE_KEYS.findRoleById, (signal) => roleService.findById(id, { signal }))
+        if (!result) return
 
-   const updateRole = async (id: string, req: UpdateRoleRequest) => {
-      const result = await run(ROLE_KEYS.updateRole, (signal) => roleService.update(id, req, { signal }));
-      if (!result) return;
+        return result.data
+    }
 
-      return result.message;
-   };
+    const createRole = async (req: CreateRoleRequest) => {
+        const result = await run(ROLE_KEYS.createRole, (signal) => roleService.create(req, { signal }))
+        if (!result) return
+        return result.message
+    }
 
-   const deleteRole = async (id: string) => {
-      const result = await run(ROLE_KEYS.deleteRole, (signal) => roleService.deleteRole(id, { signal }));
-      if (!result) return;
+    const updateRole = async (id: string, req: UpdateRoleRequest) => {
+        const result = await run(ROLE_KEYS.updateRole, (signal) => roleService.update(id, req, { signal }))
+        if (!result) return
 
-      return result.message;
-   };
+        return result.message
+    }
 
-   return {
-      findAllRoles,
-      createRole,
-      updateRole,
-      deleteRole,
-      roles,
-      rolesPagination,
-      isLoading,
-      getError,
-      clearError,
-   };
-});
+    const deleteRole = async (id: string) => {
+        const result = await run(ROLE_KEYS.deleteRole, (signal) => roleService.deleteRole(id, { signal }))
+        if (!result) return
+
+        return result.message
+    }
+
+    return {
+        findAllRoles,
+        findRoleById,
+        createRole,
+        updateRole,
+        deleteRole,
+        roles,
+        rolesPagination,
+        isLoading,
+        getError,
+        clearError,
+    }
+})
