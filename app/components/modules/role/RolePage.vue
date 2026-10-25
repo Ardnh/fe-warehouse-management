@@ -106,8 +106,6 @@ const onDeleteRoleConfirmed = async () => {
 }
 
 const onSubmit = async (data: any) => {
-    console.log(data)
-
     if (data.action === 'create') {
         await roleStore.createRole(data.payload)
     } else {

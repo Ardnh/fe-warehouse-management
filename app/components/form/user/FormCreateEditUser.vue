@@ -1,89 +1,117 @@
 <script setup lang="ts">
-import * as z from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import type { Role, User } from "~/models";
+import type { FormSubmitEvent, SelectMenuItem } from '@nuxt/ui'
+import type { Role, User } from '~/models'
+import { createUserSchema, updateUserSchema } from '~/utils/schemas'
+import type { UserFormPayload, UserSchema } from '~/utils/schemas'
+
+const toast = useToast()
+const roleStore = useRoleStore()
+const locationStore = useLocationStore()
+
+const { roles } = storeToRefs(roleStore)
+const { locations } = storeToRefs(locationStore)
 
 const emit = defineEmits<{
-    close: [];
-    submit: [{ payload: UserFormPayload }];
-}>();
+    close: []
+    submit: [{ payload: UserFormPayload }]
+}>()
 
-const open = defineModel<boolean>("open", { default: false });
+const open = defineModel<boolean>('open', { default: false })
 
 const props = withDefaults(
     defineProps<{
-        data?: User;
-        roles?: Role[];
-        loading?: boolean;
+        data?: User
+        loading?: boolean
     }>(),
     {
-        roles: () => [],
         loading: false,
-    },
-);
+    }
+)
 
-const formId = useId();
-const isEditing = computed(() => Boolean(props.data));
+const formId = useId()
+const isEditing = computed(() => Boolean(props.data))
 
-const schema = z.object({
-    username: z.string().min(1, "Username wajib diisi"),
-    email: z.string().email("Email tidak valid"),
-    password: z
-        .string()
-        .refine(
-            (value) => isEditing.value || value.length > 0,
-            "Password wajib diisi",
-        ),
-    full_name: z.string().min(1, "Nama lengkap wajib diisi"),
-    status: z.enum(["ACTIVE", "INACTIVE"]),
-    role_ids: z.array(z.string()).min(1, "Pilih minimal satu role"),
-});
-
-type Schema = z.output<typeof schema>;
-export type UserFormPayload = Schema;
-
-const state = reactive<Schema>({
-    username: "",
-    email: "",
-    password: "",
-    full_name: "",
-    status: "ACTIVE",
-    role_ids: [],
-});
+const state = reactive<UserSchema>({
+    username: '',
+    email: '',
+    password: '',
+    full_name: '',
+    location_id: '',
+    status: 'ACTIVE',
+    role_id: '',
+})
 
 const statusOptions = [
-    { label: "Aktif", value: "ACTIVE" },
-    { label: "Nonaktif", value: "INACTIVE" },
-];
+    { label: 'Aktif', value: 'ACTIVE' },
+    { label: 'Nonaktif', value: 'INACTIVE' },
+]
 
-const roleOptions = computed(() =>
-    props.roles.map((role) => ({ label: role.name, value: role.id })),
-);
+const userSchema = computed(() => (isEditing.value ? updateUserSchema : createUserSchema))
+const roleOptions = computed<SelectMenuItem[]>(() => roles.value.map((role) => ({ label: role.name, value: role.id })))
+const locationOptions = computed<SelectMenuItem[]>(() => locations.value.map((location) => ({ label: location.name, value: location.id })))
 
 function resetState() {
-    state.username = props.data?.username ?? "";
-    state.email = props.data?.email ?? "";
-    state.password = "";
-    state.full_name = props.data?.full_name ?? "";
-    state.status = (props.data?.status ?? "ACTIVE") as Schema["status"];
-    state.role_ids = props.data?.role_ids ?? [];
+    state.username = props.data?.username ?? ''
+    state.email = props.data?.email ?? ''
+    state.password = ''
+    state.full_name = props.data?.full_name ?? ''
+    state.status = (props.data?.status ?? 'ACTIVE') as UserSchema['status']
+    state.role_id = props.data?.roles?.id ?? ''
+    state.location_id = props.data?.location?.id ?? ''
 }
 
-function onSubmit(event: FormSubmitEvent<Schema>) {
-    emit("submit", { payload: event.data });
+function onSubmit(event: FormSubmitEvent<UserSchema>) {
+    const { password, ...rest } = event.data
+    emit('submit', { payload: password ? { ...rest, password } : rest })
+}
+
+async function loadRoles() {
+    try {
+        await roleStore.findAllRoles({
+            page: 1,
+            page_size: 20,
+        })
+    } catch {
+        toast.add({
+            title: 'Gagal memuat role',
+            description: 'Role tidak dapat dimuat. Coba buka halaman ini lagi.',
+            color: 'warning',
+            icon: 'i-lucide-triangle-alert',
+        })
+    }
+}
+
+async function loadLocation() {
+    try {
+        await locationStore.findAllLocations({
+            page: 1,
+            page_size: 20,
+        })
+    } catch {
+        toast.add({
+            title: 'Gagal memuat role',
+            description: 'Role tidak dapat dimuat. Coba buka halaman ini lagi.',
+            color: 'warning',
+            icon: 'i-lucide-triangle-alert',
+        })
+    }
 }
 
 watch(
     () => [open.value, props.data] as const,
     ([isOpen]) => {
-        if (isOpen) resetState();
+        if (isOpen) resetState()
     },
-    { immediate: true },
-);
+    { immediate: true }
+)
 
 watch(open, (value) => {
-    if (!value) emit("close");
-});
+    if (!value) emit('close')
+})
+
+onMounted(async () => {
+    await Promise.all([loadRoles(), loadLocation()])
+})
 </script>
 
 <template>
@@ -95,38 +123,27 @@ watch(open, (value) => {
         :close="{ color: 'neutral', variant: 'soft', class: 'rounded-full' }"
     >
         <template #body>
-            <UForm
-                :id="formId"
-                :schema="schema"
-                :state="state"
-                class="grid gap-4 sm:grid-cols-2"
-                @submit="onSubmit"
-            >
+            <UForm :id="formId" :schema="userSchema" :state="state" class="grid gap-4 sm:grid-cols-2" @submit="onSubmit">
                 <UFormField label="Nama lengkap" name="full_name" required>
-                    <UInput
-                        v-model="state.full_name"
-                        class="w-full"
-                        placeholder="Nama lengkap"
-                        :disabled="loading"
-                    />
+                    <UInput v-model="state.full_name" class="w-full" placeholder="Nama lengkap" :disabled="loading" />
                 </UFormField>
 
                 <UFormField label="Username" name="username" required>
-                    <UInput
-                        v-model="state.username"
-                        class="w-full"
-                        placeholder="username"
-                        :disabled="loading"
-                    />
+                    <UInput v-model="state.username" class="w-full" placeholder="username" :disabled="loading" />
                 </UFormField>
 
                 <UFormField label="Email" name="email" required>
-                    <UInput
-                        v-model="state.email"
+                    <UInput v-model="state.email" class="w-full" type="email" placeholder="user@example.com" :disabled="loading" />
+                </UFormField>
+
+                <UFormField label="Location" name="location_id" required>
+                    <USelectMenu
+                        v-model="state.location_id"
+                        :items="locationOptions"
+                        value-key="value"
                         class="w-full"
-                        type="email"
-                        placeholder="user@example.com"
-                        :disabled="loading"
+                        placeholder="Pilih lokasi"
+                        :disabled="loading || !locationOptions.length"
                     />
                 </UFormField>
 
@@ -134,11 +151,7 @@ watch(open, (value) => {
                     :label="isEditing ? 'Password baru' : 'Password'"
                     name="password"
                     :required="!isEditing"
-                    :hint="
-                        isEditing
-                            ? 'Kosongkan jika tidak ingin mengubah password'
-                            : undefined
-                    "
+                    :hint="isEditing ? 'Kosongkan jika tidak ingin mengubah password' : undefined"
                     class="sm:col-span-2"
                 >
                     <UInput
@@ -151,12 +164,11 @@ watch(open, (value) => {
                     />
                 </UFormField>
 
-                <UFormField label="Role" name="role_ids" required>
+                <UFormField label="Role" name="role_id" required>
                     <USelectMenu
-                        v-model="state.role_ids"
+                        v-model="state.role_id"
                         :items="roleOptions"
                         value-key="value"
-                        multiple
                         class="w-full"
                         placeholder="Pilih role"
                         :disabled="loading || !roleOptions.length"
@@ -164,33 +176,14 @@ watch(open, (value) => {
                 </UFormField>
 
                 <UFormField label="Status" name="status" required>
-                    <USelect
-                        v-model="state.status"
-                        :items="statusOptions"
-                        value-key="value"
-                        class="w-full"
-                        :disabled="loading"
-                    />
+                    <USelect v-model="state.status" :items="statusOptions" value-key="value" class="w-full" :disabled="loading" />
                 </UFormField>
             </UForm>
         </template>
 
         <template #footer="{ close }">
-            <UButton
-                label="Batal"
-                color="neutral"
-                variant="soft"
-                :disabled="loading"
-                @click="close"
-            />
-            <UButton
-                :label="isEditing ? 'Simpan perubahan' : 'Buat user'"
-                color="primary"
-                icon="i-lucide-save"
-                type="submit"
-                :form="formId"
-                :loading="loading"
-            />
+            <UButton label="Batal" color="neutral" variant="soft" :disabled="loading" @click="close" />
+            <UButton :label="isEditing ? 'Simpan perubahan' : 'Buat user'" color="primary" icon="i-lucide-save" type="submit" :form="formId" :loading="loading" />
         </template>
     </UModal>
 </template>

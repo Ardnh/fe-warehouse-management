@@ -12,6 +12,7 @@ export interface BasePagination {
 export interface BaseParams {
     page: number
     page_size: number
+    search?: string
 }
 
 export interface Options {

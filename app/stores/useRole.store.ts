@@ -5,7 +5,7 @@ import { INITIAL_PAGINATION, ROLE_KEYS } from '~/constants'
 export const useRoleStore = defineStore('role', () => {
     // Instance
     const roleService = useRoleService()
-    const { run, isLoading, getError, clearError } = useAsync()
+    const { run, isLoading } = useAsync()
 
     // State
     const roles = ref<Role[]>([])
@@ -16,37 +16,32 @@ export const useRoleStore = defineStore('role', () => {
     // Actions
     const findAllRoles = async (query: BaseParams) => {
         const result = await run(ROLE_KEYS.findAllRoles, (signal) => roleService.findAll(query, { signal }))
-        if (!result) return
-        roles.value = result.data
-        rolesPagination.value = result.pagination
-        return result.data
+        if (!result.ok) {
+            return result
+        }
+
+        roles.value = result.data.data
+        rolesPagination.value = result.data.pagination
     }
 
     const findRoleById = async (id: string) => {
         const result = await run(ROLE_KEYS.findRoleById, (signal) => roleService.findById(id, { signal }))
-        if (!result) return
-
-        return result.data
+        return result
     }
 
     const createRole = async (req: CreateRoleRequest) => {
         const result = await run(ROLE_KEYS.createRole, (signal) => roleService.create(req, { signal }))
-        if (!result) return
-        return result.message
+        return result
     }
 
     const updateRole = async (id: string, req: UpdateRoleRequest) => {
         const result = await run(ROLE_KEYS.updateRole, (signal) => roleService.update(id, req, { signal }))
-        if (!result) return
-
-        return result.message
+        return result
     }
 
     const deleteRole = async (id: string) => {
         const result = await run(ROLE_KEYS.deleteRole, (signal) => roleService.deleteRole(id, { signal }))
-        if (!result) return
-
-        return result.message
+        return result
     }
 
     return {
@@ -58,7 +53,6 @@ export const useRoleStore = defineStore('role', () => {
         roles,
         rolesPagination,
         isLoading,
-        getError,
         clearError,
     }
 })
