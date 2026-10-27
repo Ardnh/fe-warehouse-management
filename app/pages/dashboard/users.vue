@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Row } from '@tanstack/vue-table'
-import type { BaseParams, User } from '~/models'
+import type { BaseParams, CreateUserRequest, UpdateUserRequest, User } from '~/models'
 import DeleteConfirmationModal from '~/components/modal/DeleteConfirmationModal.vue'
-import type { UserFormPayload } from '~/components/form/user/FormCreateEditUser.vue'
+import type { UserFormPayload } from '~/utils/schemas'
 import { USER_KEYS } from '~/constants'
 import { watchDebounced } from '@vueuse/core'
 
@@ -112,8 +112,8 @@ async function onEdit(user: User) {
 
     try {
         const detail = await userStore.findById(user.id)
-        if (detail.ok) {
-            selectedUser.value = detail.data.data
+        if (detail) {
+            selectedUser.value = detail
         }
     } catch {
         toast.add({
@@ -137,14 +137,14 @@ function closeForm() {
 async function onFormSubmit({ payload }: { payload: UserFormPayload }) {
     try {
         if (selectedUser.value) {
-            const result = await userStore.update(selectedUser.value.id, payload)
+            const result = await userStore.update(selectedUser.value.id, payload as unknown as UpdateUserRequest)
             if (!result?.ok) {
                 toast.add({ title: result.error?.message ?? 'Gagal update user', color: 'success' })
                 return
             }
             toast.add({ title: 'User berhasil diperbarui', color: 'success' })
         } else {
-            const result = await userStore.create(payload)
+            const result = await userStore.create(payload as unknown as CreateUserRequest)
             if (!result.ok) {
                 toast.add({ title: result.error?.message ?? 'Gagal create user', color: 'success' })
                 return
@@ -167,7 +167,11 @@ async function onDeleteConfirmed() {
     if (!selectedUser.value) return
 
     try {
-        await userStore.deleteUser(selectedUser.value.id)
+        const result = await userStore.deleteUser(selectedUser.value.id)
+        if (!result.ok) {
+            toast.add({ title: result.error?.message ?? 'Gagal menghapus user', color: 'error' })
+            return
+        }
         openDelete.value = false
         toast.add({ title: 'User berhasil dihapus', color: 'success' })
         selectedUser.value = undefined
@@ -185,6 +189,11 @@ async function onDeleteConfirmed() {
 function onPageChange(page: number) {
     query.page = page
     loadUsers()
+}
+
+function onAddUser() {
+    selectedUser.value = undefined
+    openForm.value = true
 }
 
 watchDebounced(
@@ -216,17 +225,7 @@ useHead({ title: 'Dashboard | Users' })
                 <h1 class="text-xl font-semibold text-highlighted">Users</h1>
                 <p class="mt-1 text-sm text-muted">Kelola akses dan akun pengguna warehouse.</p>
             </div>
-            <UButton
-                icon="i-lucide-plus"
-                label="Tambah user"
-                color="primary"
-                @click="
-                    () => {
-                        selectedUser = undefined
-                        openForm = true
-                    }
-                "
-            />
+            <UButton icon="i-lucide-plus" label="Tambah user" color="primary" @click="() => {}" />
         </div>
 
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -257,15 +256,14 @@ useHead({ title: 'Dashboard | Users' })
                 @update:page="onPageChange"
             />
         </div>
-
-        <FormUserFormCreateEditUser
-            v-model:open="openForm"
-            :data="selectedUser"
-            :loading="userStore.isLoading('createUser') || userStore.isLoading('updateUser') || userStore.isLoading('findById')"
-            @close="closeForm"
-            @submit="onFormSubmit"
-        />
-
-        <DeleteConfirmationModal v-model:open="openDelete" :item-name="selectedUser?.full_name" :loading="userStore.isLoading('deleteUser')" @delete="onDeleteConfirmed" />
     </div>
+    <FormUserFormCreateEditUser
+        v-model:open="openForm"
+        :data="selectedUser"
+        :loading="userStore.isLoading('createUser') || userStore.isLoading('updateUser') || userStore.isLoading('findById')"
+        @close="closeForm"
+        @submit="onFormSubmit"
+    />
+
+    <DeleteConfirmationModal v-model:open="openDelete" :item-name="selectedUser?.full_name" :loading="userStore.isLoading('deleteUser')" @delete="onDeleteConfirmed" />
 </template>

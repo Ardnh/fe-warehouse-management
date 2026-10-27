@@ -99,18 +99,17 @@ const onDeleteRole = (row: Role) => {
 
 const onDeleteRoleConfirmed = async () => {
     if (!tempRoleData.value) return
-    await roleStore.deleteRole(tempRoleData.value.id)
+    const result = await roleStore.deleteRole(tempRoleData.value.id)
+    if (!result.ok) return
+
     openModalDelete.value = false
     tempRoleData.value = undefined
     await roleStore.findAllRoles(query.value)
 }
 
 const onSubmit = async (data: any) => {
-    if (data.action === 'create') {
-        await roleStore.createRole(data.payload)
-    } else {
-        await roleStore.updateRole(data.id, data.payload)
-    }
+    const result = data.action === 'create' ? await roleStore.createRole(data.payload) : await roleStore.updateRole(data.id, data.payload)
+    if (!result.ok) return
 
     onCloseModal()
     await roleStore.findAllRoles(query.value)

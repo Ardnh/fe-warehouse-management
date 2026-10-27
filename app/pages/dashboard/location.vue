@@ -1,267 +1,220 @@
 <script setup lang="ts">
-import type { Row } from "@tanstack/vue-table";
-import type { BaseParams, Location } from "~/models";
-import type { LocationFormPayload } from "~/components/form/location/FormCreateEditLocation.vue";
-import DeleteConfirmationModal from "~/components/modal/DeleteConfirmationModal.vue";
+import type { Row } from '@tanstack/vue-table'
+import type { BaseParams, Location } from '~/models'
+import type { LocationFormPayload } from '~/components/form/location/FormCreateEditLocation.vue'
+import DeleteConfirmationModal from '~/components/modal/DeleteConfirmationModal.vue'
 
-const locationStore = useLocationStore();
-const { locations, locationPagination } = storeToRefs(locationStore);
-const toast = useToast();
+const locationStore = useLocationStore()
+const { locations, locationPagination } = storeToRefs(locationStore)
+const toast = useToast()
 
-const UButton = resolveComponent("UButton");
-const UBadge = resolveComponent("UBadge");
+const UButton = resolveComponent('UButton')
+const UBadge = resolveComponent('UBadge')
 
-const openForm = ref(false);
-const openDelete = ref(false);
-const selectedLocation = ref<Location>();
-const search = ref("");
-let searchTimer: ReturnType<typeof setTimeout> | undefined;
+const openForm = ref(false)
+const openDelete = ref(false)
+const selectedLocation = ref<Location>()
+const search = ref('')
+let searchTimer: ReturnType<typeof setTimeout> | undefined
 
-const query = reactive<BaseParams>({ page: 1, page_size: 20, search: "" });
+const query = reactive<BaseParams>({ page: 1, page_size: 20, search: '' })
 
 const columns = [
     {
-        accessorKey: "code",
-        header: "Kode",
-        cell: ({ row }: { row: Row<Location> }) =>
-            h(
-                "span",
-                { class: "font-mono text-sm font-semibold text-highlighted" },
-                row.original.code,
-            ),
+        accessorKey: 'code',
+        header: 'Kode',
+        cell: ({ row }: { row: Row<Location> }) => h('span', { class: 'font-mono text-sm font-semibold text-highlighted' }, row.original.code),
     },
     {
-        accessorKey: "name",
-        header: "Nama location",
+        accessorKey: 'name',
+        header: 'Nama location',
         cell: ({ row }: { row: Row<Location> }) =>
-            h("div", { class: "min-w-48" }, [
-                h(
-                    "p",
-                    { class: "font-medium text-highlighted" },
-                    row.original.name,
-                ),
-                h(
-                    "p",
-                    { class: "text-xs text-muted" },
-                    row.original.city || "Kota belum diisi",
-                ),
+            h('div', { class: 'min-w-48' }, [
+                h('p', { class: 'font-medium text-highlighted' }, row.original.name),
+                h('p', { class: 'text-xs text-muted' }, row.original.city || 'Kota belum diisi'),
             ]),
     },
     {
-        accessorKey: "type",
-        header: "Tipe",
+        accessorKey: 'type',
+        header: 'Tipe',
         cell: ({ row }: { row: Row<Location> }) =>
             h(
                 UBadge,
                 {
-                    color: row.original.type === "HO" ? "primary" : "neutral",
-                    variant: "subtle",
+                    color: row.original.type === 'HO' ? 'primary' : 'neutral',
+                    variant: 'subtle',
                 },
-                () =>
-                    row.original.type === "HO" ? "Head Office" : "Warehouse",
+                () => (row.original.type === 'HO' ? 'Head Office' : 'Warehouse')
             ),
     },
     {
-        accessorKey: "address",
-        header: "Alamat",
-        cell: ({ row }: { row: Row<Location> }) =>
-            h(
-                "span",
-                { class: "line-clamp-2 max-w-sm text-sm text-muted" },
-                row.original.address || "-",
-            ),
+        accessorKey: 'address',
+        header: 'Alamat',
+        cell: ({ row }: { row: Row<Location> }) => h('span', { class: 'line-clamp-2 max-w-sm text-sm text-muted' }, row.original.address || '-'),
     },
     {
-        accessorKey: "is_active",
-        header: "Status",
+        accessorKey: 'is_active',
+        header: 'Status',
         cell: ({ row }: { row: Row<Location> }) =>
             h(
                 UBadge,
                 {
-                    color: row.original.is_active ? "success" : "neutral",
-                    variant: "subtle",
+                    color: row.original.is_active ? 'success' : 'neutral',
+                    variant: 'subtle',
                 },
-                () => (row.original.is_active ? "Aktif" : "Nonaktif"),
+                () => (row.original.is_active ? 'Aktif' : 'Nonaktif')
             ),
     },
     {
-        id: "actions",
-        meta: { class: { th: "text-right", td: "text-right" } },
+        id: 'actions',
+        meta: { class: { th: 'text-right', td: 'text-right' } },
         cell: ({ row }: { row: Row<Location> }) =>
-            h("div", { class: "flex justify-end gap-1" }, [
+            h('div', { class: 'flex justify-end gap-1' }, [
                 h(UButton, {
-                    icon: "i-lucide-pencil",
-                    color: "neutral",
-                    variant: "soft",
-                    size: "sm",
-                    "aria-label": `Edit ${row.original.name}`,
+                    icon: 'i-lucide-pencil',
+                    color: 'neutral',
+                    variant: 'soft',
+                    size: 'sm',
+                    'aria-label': `Edit ${row.original.name}`,
                     onClick: () => onEdit(row.original),
                 }),
                 h(UButton, {
-                    icon: "i-lucide-trash-2",
-                    color: "error",
-                    variant: "soft",
-                    size: "sm",
-                    "aria-label": `Hapus ${row.original.name}`,
-                    loading: locationStore.isLoading("location.remove"),
+                    icon: 'i-lucide-trash-2',
+                    color: 'error',
+                    variant: 'soft',
+                    size: 'sm',
+                    'aria-label': `Hapus ${row.original.name}`,
+                    loading: locationStore.isLoading('location.remove'),
                     onClick: () => onDelete(row.original),
                 }),
             ]),
     },
-];
+]
 
 async function loadLocations() {
     try {
-        await locationStore.findAllLocations({ ...query });
+        await locationStore.findAllLocations({ ...query })
     } catch (error) {
         toast.add({
-            title: "Gagal memuat location",
-            description:
-                error instanceof Error ? error.message : "Silakan coba lagi.",
-            color: "error",
-            icon: "i-lucide-circle-alert",
-        });
+            title: 'Gagal memuat location',
+            description: error instanceof Error ? error.message : 'Silakan coba lagi.',
+            color: 'error',
+            icon: 'i-lucide-circle-alert',
+        })
     }
 }
 
 async function onEdit(location: Location) {
-    selectedLocation.value = location;
-    openForm.value = true;
+    selectedLocation.value = location
+    openForm.value = true
 
     try {
-        const detail = await locationStore.findById(location.id);
-        if (detail) selectedLocation.value = detail;
+        const detail = await locationStore.findById(location.id)
+        if (detail.ok) selectedLocation.value = detail.data.data
     } catch {
         toast.add({
-            title: "Gagal memuat detail location",
-            description: "Data dari daftar tetap dapat diedit.",
-            color: "warning",
-        });
+            title: 'Gagal memuat detail location',
+            description: 'Data dari daftar tetap dapat diedit.',
+            color: 'warning',
+        })
     }
 }
 
 function onDelete(location: Location) {
-    selectedLocation.value = location;
-    openDelete.value = true;
+    selectedLocation.value = location
+    openDelete.value = true
 }
 
 function closeForm() {
-    openForm.value = false;
-    selectedLocation.value = undefined;
+    openForm.value = false
+    selectedLocation.value = undefined
 }
 
 async function onFormSubmit({ payload }: { payload: LocationFormPayload }) {
     try {
         if (selectedLocation.value) {
-            await locationStore.update(selectedLocation.value.id, payload);
+            await locationStore.update(selectedLocation.value.id, payload)
             toast.add({
-                title: "Location berhasil diperbarui",
-                color: "success",
-            });
+                title: 'Location berhasil diperbarui',
+                color: 'success',
+            })
         } else {
-            await locationStore.create(
-                payload as Extract<LocationFormPayload, { code: string }>,
-            );
-            toast.add({ title: "Location berhasil dibuat", color: "success" });
+            await locationStore.create(payload as Extract<LocationFormPayload, { code: string }>)
+            toast.add({ title: 'Location berhasil dibuat', color: 'success' })
         }
-        closeForm();
-        await loadLocations();
+        closeForm()
+        await loadLocations()
     } catch (error) {
         toast.add({
-            title: "Gagal menyimpan location",
-            description:
-                error instanceof Error ? error.message : "Silakan coba lagi.",
-            color: "error",
-            icon: "i-lucide-circle-alert",
-        });
+            title: 'Gagal menyimpan location',
+            description: error instanceof Error ? error.message : 'Silakan coba lagi.',
+            color: 'error',
+            icon: 'i-lucide-circle-alert',
+        })
     }
 }
 
 async function onDeleteConfirmed() {
-    if (!selectedLocation.value) return;
+    if (!selectedLocation.value) return
 
     try {
-        await locationStore.deleteLocation(selectedLocation.value.id);
-        openDelete.value = false;
-        selectedLocation.value = undefined;
-        if (locations.value.length === 1 && query.page > 1) query.page -= 1;
-        toast.add({ title: "Location berhasil dihapus", color: "success" });
-        await loadLocations();
+        await locationStore.deleteLocation(selectedLocation.value.id)
+        openDelete.value = false
+        selectedLocation.value = undefined
+        if (locations.value.length === 1 && query.page > 1) query.page -= 1
+        toast.add({ title: 'Location berhasil dihapus', color: 'success' })
+        await loadLocations()
     } catch (error) {
         toast.add({
-            title: "Gagal menghapus location",
-            description:
-                error instanceof Error ? error.message : "Silakan coba lagi.",
-            color: "error",
-        });
+            title: 'Gagal menghapus location',
+            description: error instanceof Error ? error.message : 'Silakan coba lagi.',
+            color: 'error',
+        })
     }
 }
 
 function onPageChange(page: number) {
-    query.page = page;
-    loadLocations();
+    query.page = page
+    loadLocations()
 }
-
+function onAddLocation() {
+    selectedLocation.value = undefined
+    openForm.value = true
+}
 watch(search, (value) => {
-    if (searchTimer) clearTimeout(searchTimer);
+    if (searchTimer) clearTimeout(searchTimer)
     searchTimer = setTimeout(() => {
-        query.search = value.trim();
-        query.page = 1;
-        loadLocations();
-    }, 300);
-});
+        query.search = value.trim()
+        query.page = 1
+        loadLocations()
+    }, 300)
+})
 
 onBeforeUnmount(() => {
-    if (searchTimer) clearTimeout(searchTimer);
-});
+    if (searchTimer) clearTimeout(searchTimer)
+})
 
-onMounted(loadLocations);
-definePageMeta({ layout: "dashboard", ssr: false });
-useHead({ title: "Dashboard | Locations" });
+onMounted(loadLocations)
+definePageMeta({ layout: 'dashboard', ssr: false })
+useHead({ title: 'Dashboard | Locations' })
 </script>
 
 <template>
     <div class="flex h-full min-h-0 flex-col gap-5">
-        <div
-            class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
-        >
+        <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
-                <h1 class="text-xl font-semibold text-highlighted">
-                    Locations
-                </h1>
-                <p class="mt-1 text-sm text-muted">
-                    Kelola head office dan lokasi warehouse.
-                </p>
+                <h1 class="text-xl font-semibold text-highlighted">Locations</h1>
+                <p class="mt-1 text-sm text-muted">Kelola head office dan lokasi warehouse.</p>
             </div>
-            <UButton
-                icon="i-lucide-plus"
-                label="Tambah location"
-                color="primary"
-                @click="
-                    selectedLocation = undefined;
-                    openForm = true;
-                "
-            />
+            <UButton icon="i-lucide-plus" label="Tambah location" color="primary" @click="onAddLocation" />
         </div>
 
-        <div
-            class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-        >
-            <UInput
-                v-model="search"
-                icon="i-lucide-search"
-                placeholder="Cari kode, nama, kota, atau alamat..."
-                class="w-full sm:max-w-sm"
-                aria-label="Cari location"
-            />
-            <p class="text-sm text-muted">
-                {{ locationPagination.total_items }} location
-            </p>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <UInput v-model="search" icon="i-lucide-search" placeholder="Cari kode, nama, kota, atau alamat..." class="w-full sm:max-w-sm" aria-label="Cari location" />
+            <p class="text-sm text-muted">{{ locationPagination.total_items }} location</p>
         </div>
 
-        <div
-            class="min-h-0 flex-1 overflow-auto rounded-lg border border-default bg-default"
-        >
+        <div class="min-h-0 flex-1 overflow-auto rounded-lg border border-default bg-default">
             <UTable
                 :data="locations"
                 :columns="columns"
@@ -270,9 +223,7 @@ useHead({ title: "Dashboard | Locations" });
                 loading-animation="carousel"
                 class="min-w-240"
                 :ui="{ root: 'border-0' }"
-                :empty="
-                    search ? 'Location tidak ditemukan.' : 'Belum ada location.'
-                "
+                :empty="search ? 'Location tidak ditemukan.' : 'Belum ada location.'"
             />
         </div>
 
@@ -290,20 +241,11 @@ useHead({ title: "Dashboard | Locations" });
         <FormLocationFormCreateEditLocation
             v-model:open="openForm"
             :data="selectedLocation"
-            :loading="
-                locationStore.isLoading('location.create') ||
-                locationStore.isLoading('location.update') ||
-                locationStore.isLoading('location.findById')
-            "
+            :loading="locationStore.isLoading('location.create') || locationStore.isLoading('location.update') || locationStore.isLoading('location.findById')"
             @close="closeForm"
             @submit="onFormSubmit"
         />
 
-        <DeleteConfirmationModal
-            v-model:open="openDelete"
-            :item-name="selectedLocation?.name"
-            :loading="locationStore.isLoading('location.remove')"
-            @delete="onDeleteConfirmed"
-        />
+        <DeleteConfirmationModal v-model:open="openDelete" :item-name="selectedLocation?.name" :loading="locationStore.isLoading('location.remove')" @delete="onDeleteConfirmed" />
     </div>
 </template>

@@ -1,63 +1,45 @@
-import { INITIAL_PAGINATION } from "~/constants";
-import { UOM_KEYS } from "~/constants/uom.constant";
-import { useUomService } from "~/services";
-import type {
-    BaseParams,
-    CreateUomRequest,
-    Pagination,
-    Uom,
-    UpdateUomRequest,
-} from "~/models";
+import { INITIAL_PAGINATION } from '~/constants'
+import { UOM_KEYS } from '~/constants/uom.constant'
+import { useUomRepository } from '~/repositories'
+import { cleanObject } from '~/utils'
+import type { BaseParams, CreateUomRequest, Pagination, Uom, UpdateUomRequest } from '~/models'
 
-export const useUomStore = defineStore("uom", () => {
-    const uomService = useUomService();
-    const { run, isLoading, getError, clearError } = useAsync();
+export const useUomStore = defineStore('uom', () => {
+    const uomRepository = useUomRepository()
+    const { run, isLoading } = useAsync()
 
-    const uoms = ref<Uom[]>([]);
-    const uom = ref<Uom | null>(null);
-    const uomPagination = ref<Pagination>({ ...INITIAL_PAGINATION });
+    const uoms = ref<Uom[]>([])
+    const uom = ref<Uom | null>(null)
+    const uomPagination = ref<Pagination>({ ...INITIAL_PAGINATION })
 
     const findAllUoms = async (query: BaseParams) => {
-        const result = await run(UOM_KEYS.findAll, (signal) =>
-            uomService.findAll(query, { signal }),
-        );
-        if (!result) return;
+        const result = await run(UOM_KEYS.findAll, (signal) => uomRepository.findAll(cleanObject(query), { signal }))
+        if (!result.ok) return result
 
-        uoms.value = result.data;
-        uomPagination.value = result.pagination;
-        return result.data;
-    };
+        uoms.value = result.data.data
+        uomPagination.value = result.data.pagination
+        return result.data.data
+    }
 
     const findById = async (id: string) => {
-        const result = await run(UOM_KEYS.findById, (signal) =>
-            uomService.findById(id, { signal }),
-        );
-        if (!result) return;
+        const result = await run(UOM_KEYS.findById, (signal) => uomRepository.findById(id, { signal }))
+        if (!result.ok) return
 
-        uom.value = result.data;
-        return result.data;
-    };
+        uom.value = result.data.data
+        return result.data.data
+    }
 
     const create = async (payload: CreateUomRequest) => {
-        const result = await run(UOM_KEYS.create, (signal) =>
-            uomService.create(payload, { signal }),
-        );
-        return result?.message;
-    };
+        return run(UOM_KEYS.create, (signal) => uomRepository.create(payload, { signal }))
+    }
 
     const update = async (id: string, payload: UpdateUomRequest) => {
-        const result = await run(UOM_KEYS.update, (signal) =>
-            uomService.update(id, payload, { signal }),
-        );
-        return result?.message;
-    };
+        return run(UOM_KEYS.update, (signal) => uomRepository.update(id, payload, { signal }))
+    }
 
     const deleteUom = async (id: string) => {
-        const result = await run(UOM_KEYS.remove, (signal) =>
-            uomService.deleteUom(id, { signal }),
-        );
-        return result?.message;
-    };
+        return run(UOM_KEYS.remove, (signal) => uomRepository.delete(id, { signal }))
+    }
 
     return {
         uoms,
@@ -69,7 +51,5 @@ export const useUomStore = defineStore("uom", () => {
         update,
         deleteUom,
         isLoading,
-        getError,
-        clearError,
-    };
-});
+    }
+})

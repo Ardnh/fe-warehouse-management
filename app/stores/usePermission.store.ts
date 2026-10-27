@@ -1,11 +1,12 @@
 import type { Permission, FindAllPermissionParams, Pagination } from '~/models'
-import { usePermissionService } from '~/services'
+import { usePermissionsRepository } from '~/repositories'
+import { cleanObject } from '~/utils'
 import { INITIAL_PAGINATION, INITIAL_PARAMS, PERMISSION_KEYS } from '~/constants'
 
 export const usePermissionStore = defineStore('permission', () => {
     // Instance
-    const permissionService = usePermissionService()
-    const { run, isLoading, getError, clearError } = useAsync()
+    const permissionRepository = usePermissionsRepository()
+    const { run, isLoading } = useAsync()
 
     // State
     const permissions = ref<Permission[]>([])
@@ -15,19 +16,17 @@ export const usePermissionStore = defineStore('permission', () => {
 
     // Actions
     const findAllPermissions = async (query: FindAllPermissionParams = INITIAL_PARAMS) => {
-        const result = await run(PERMISSION_KEYS.findAllPermissions, (signal) => permissionService.findAll(query, { signal }))
-        if (!result) return
+        const result = await run(PERMISSION_KEYS.findAllPermissions, (signal) => permissionRepository.findAll(cleanObject(query), { signal }))
+        if (!result.ok) return result
 
-        permissions.value = result.data
-        permissionsPagination.value = result.pagination
-        return result.data
+        permissions.value = result.data.data
+        permissionsPagination.value = result.data.pagination
+        return result
     }
 
     return {
         permissions,
         findAllPermissions,
         isLoading,
-        getError,
-        clearError,
     }
 })

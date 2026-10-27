@@ -1,63 +1,45 @@
-import { INITIAL_PAGINATION } from "~/constants";
-import { WAREHOUSE_KEYS } from "~/constants/warehouse.constant";
-import { useWarehouseService } from "~/services";
-import type {
-    BaseParams,
-    CreateWarehouseRequest,
-    Pagination,
-    UpdateWarehouseRequest,
-    Warehouse,
-} from "~/models";
+import { INITIAL_PAGINATION } from '~/constants'
+import { WAREHOUSE_KEYS } from '~/constants/warehouse.constant'
+import { useWarehouseRepository } from '~/repositories'
+import { cleanObject } from '~/utils'
+import type { BaseParams, CreateWarehouseRequest, Pagination, UpdateWarehouseRequest, Warehouse } from '~/models'
 
-export const useWarehouseStore = defineStore("warehouse", () => {
-    const warehouseService = useWarehouseService();
-    const { run, isLoading, getError, clearError } = useAsync();
+export const useWarehouseStore = defineStore('warehouse', () => {
+    const warehouseRepository = useWarehouseRepository()
+    const { run, isLoading } = useAsync()
 
-    const warehouses = ref<Warehouse[]>([]);
-    const warehouse = ref<Warehouse | null>(null);
-    const warehousePagination = ref<Pagination>({ ...INITIAL_PAGINATION });
+    const warehouses = ref<Warehouse[]>([])
+    const warehouse = ref<Warehouse | null>(null)
+    const warehousePagination = ref<Pagination>({ ...INITIAL_PAGINATION })
 
     const findAllWarehouses = async (query: BaseParams) => {
-        const result = await run(WAREHOUSE_KEYS.findAll, (signal) =>
-            warehouseService.findAll(query, { signal }),
-        );
-        if (!result) return;
+        const result = await run(WAREHOUSE_KEYS.findAll, (signal) => warehouseRepository.findAll(cleanObject(query), { signal }))
+        if (!result.ok) return result
 
-        warehouses.value = result.data;
-        warehousePagination.value = result.pagination;
-        return result.data;
-    };
+        warehouses.value = result.data.data
+        warehousePagination.value = result.data.pagination
+        return result.data.data
+    }
 
     const findById = async (id: string) => {
-        const result = await run(WAREHOUSE_KEYS.findById, (signal) =>
-            warehouseService.findById(id, { signal }),
-        );
-        if (!result) return;
+        const result = await run(WAREHOUSE_KEYS.findById, (signal) => warehouseRepository.findById(id, { signal }))
+        if (!result.ok) return
 
-        warehouse.value = result.data;
-        return result.data;
-    };
+        warehouse.value = result.data.data
+        return result.data.data
+    }
 
     const create = async (payload: CreateWarehouseRequest) => {
-        const result = await run(WAREHOUSE_KEYS.create, (signal) =>
-            warehouseService.create(payload, { signal }),
-        );
-        return result?.message;
-    };
+        return run(WAREHOUSE_KEYS.create, (signal) => warehouseRepository.create(payload, { signal }))
+    }
 
     const update = async (id: string, payload: UpdateWarehouseRequest) => {
-        const result = await run(WAREHOUSE_KEYS.update, (signal) =>
-            warehouseService.update(id, payload, { signal }),
-        );
-        return result?.message;
-    };
+        return run(WAREHOUSE_KEYS.update, (signal) => warehouseRepository.update(id, payload, { signal }))
+    }
 
     const deleteWarehouse = async (id: string) => {
-        const result = await run(WAREHOUSE_KEYS.remove, (signal) =>
-            warehouseService.deleteWarehouse(id, { signal }),
-        );
-        return result?.message;
-    };
+        return run(WAREHOUSE_KEYS.remove, (signal) => warehouseRepository.delete(id, { signal }))
+    }
 
     return {
         warehouses,
@@ -69,7 +51,5 @@ export const useWarehouseStore = defineStore("warehouse", () => {
         update,
         deleteWarehouse,
         isLoading,
-        getError,
-        clearError,
-    };
-});
+    }
+})
