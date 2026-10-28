@@ -18,15 +18,15 @@ export const useUomStore = defineStore('uom', () => {
 
         uoms.value = result.data.data
         uomPagination.value = result.data.pagination
-        return result.data.data
+        return result
     }
 
     const findById = async (id: string) => {
         const result = await run(UOM_KEYS.findById, (signal) => uomRepository.findById(id, { signal }))
-        if (!result.ok) return
+        if (!result.ok) return result
 
         uom.value = result.data.data
-        return result.data.data
+        return result
     }
 
     const create = async (payload: CreateUomRequest) => {

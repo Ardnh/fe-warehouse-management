@@ -18,15 +18,15 @@ export const useWarehouseStore = defineStore('warehouse', () => {
 
         warehouses.value = result.data.data
         warehousePagination.value = result.data.pagination
-        return result.data.data
+        return result
     }
 
     const findById = async (id: string) => {
         const result = await run(WAREHOUSE_KEYS.findById, (signal) => warehouseRepository.findById(id, { signal }))
-        if (!result.ok) return
+        if (!result.ok) return result
 
         warehouse.value = result.data.data
-        return result.data.data
+        return result
     }
 
     const create = async (payload: CreateWarehouseRequest) => {

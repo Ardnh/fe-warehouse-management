@@ -16,6 +16,17 @@ export const useUserStore = defineStore('user', () => {
 
     const userPagination = ref<Pagination>({ ...INITIAL_PAGINATION })
 
+    // Computed
+    const getPermissions = computed(() => {
+        if (userProfile.value === null) return []
+        const permissions = userProfile.value.permissions ?? []
+
+        return permissions.map((permission) => {
+            const [module, action] = permission.split(':')
+            return `${module}:${action}`
+        })
+    })
+
     // Actions
     const findAllUsers = async (query: BaseParams) => {
         const result = await run(USER_KEYS.findAll, (signal) => userRepository.findAll(cleanObject(query), { signal }))
@@ -61,6 +72,7 @@ export const useUserStore = defineStore('user', () => {
     return {
         users,
         userProfile,
+        getPermissions,
         userPagination,
         findAllUsers,
         findById,

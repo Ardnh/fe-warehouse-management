@@ -124,7 +124,7 @@ async function onEdit(item: Warehouse) {
     selected.value = item
     openForm.value = true
     const detail = await warehouseStore.findById(item.id)
-    if (detail) selected.value = detail
+    if (detail.ok) selected.value = detail.data.data
 }
 function onDelete(item: Warehouse) {
     selected.value = item

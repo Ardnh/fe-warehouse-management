@@ -88,7 +88,7 @@ async function onEdit(uom: Uom) {
 
     try {
         const detail = await uomStore.findById(uom.id)
-        if (detail) selectedUom.value = detail
+        if (detail.ok) selectedUom.value = detail.data.data
     } catch {
         toast.add({
             title: 'Gagal memuat detail UOM',

@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
 import { useToast } from '@nuxt/ui/runtime/composables/useToast.js'
+import type { SidebarSection } from '~/models'
 import { useAuthStore } from '~/stores'
+import { INITIAL_SIDEBAR } from '~/constants'
 
 const route = useRoute()
 const toast = useToast()
+const { hasAccess } = useAccess()
 const authStore = useAuthStore()
+const userStore = useUserStore()
 
 const open = ref(false)
 const activePageName = ref('Dashboard')
@@ -139,6 +143,28 @@ const links = [
     },
 ] satisfies NavigationMenuItem[]
 
+const buildSidebarMenuByPermissions = computed<NavigationMenuItem[]>(() => {
+    const permissions = userStore.getPermissions
+    const initialSidebarMenu = { ...INITIAL_SIDEBAR }
+    const modules: NavigationMenuItem[] = []
+
+    for (const item in permissions) {
+        const menuItem: NavigationMenuItem = {
+            label: 'Roles',
+            description: 'Roles management',
+            icon: 'i-lucide-user-shield',
+            to: '/dashboard/roles',
+            onSelect: () => {
+                activePageName.value = 'Roles'
+                useHead({ title: `Dashboard | ${activePageName.value}` })
+            },
+        }
+    }
+
+    const { analytics, master_data, transactions, user_management } = initialSidebarMenu
+    return [...analytics, ...master_data, ...transactions, ...user_management]
+})
+
 const showModal = () => {
     open.value = !open.value
 }
@@ -171,7 +197,7 @@ onBeforeMount(() => {
 
             <template #default="{ collapsed }">
                 <UDashboardSearchButton :collapsed="collapsed" class="bg-transparent ring-default" />
-
+                <div class="">{{ buildSidebarMenuByPermissions }}</div>
                 <UNavigationMenu :collapsed="collapsed" :items="links" orientation="vertical" tooltip popover />
             </template>
 

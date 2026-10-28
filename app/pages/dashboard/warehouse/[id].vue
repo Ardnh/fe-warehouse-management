@@ -91,7 +91,7 @@ async function onEdit(zone: Zone) {
     selectedZone.value = zone
     openForm.value = true
     const detail = await zoneStore.findById(zone.id)
-    if (detail) selectedZone.value = detail
+    if (detail.ok) selectedZone.value = detail.data.data
 }
 function onDelete(zone: Zone) {
     selectedZone.value = zone
