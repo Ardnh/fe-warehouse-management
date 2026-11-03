@@ -1,0 +1,20 @@
+{
+   "auth": {
+      "pageTitle": "Sign in | WMS.GO",
+      "systemLabel": "Warehouse management system",
+      "heroTitle": "Move your warehouse forward.",
+      "heroDescription": "One workspace for managing your inventory, orders, and warehouse operations.",
+      "welcomeTitle": "Welcome back",
+      "welcomeDescription": "Sign in to continue to your dashboard.",
+      "username": "Username",
+      "usernamePlaceholder": "Enter your username",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "submit": "Sign in",
+      "loginError": "Login failed",
+      "loginErrorDescription": "The username or password you entered is incorrect.",
+      "footer": "Warehouse operations, simplified."
+   }
+}

@@ -6,10 +6,11 @@ export default defineNuxtConfig({
    modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxtjs/i18n'],
    i18n: {
       locales: [
-         { code: 'en', language: 'en-US' },
-         { code: 'fr', language: 'fr-FR' },
+         { code: 'id', language: 'id-ID', file: 'id.json' },
+         { code: 'en', language: 'en-US', file: 'en.json' },
       ],
       defaultLocale: 'id',
+      langDir: 'locales',
    },
    devServer: {
       port: 3000,

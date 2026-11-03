@@ -1,0 +1,20 @@
+{
+   "auth": {
+      "pageTitle": "Masuk | WMS.GO",
+      "systemLabel": "Sistem manajemen warehouse",
+      "heroTitle": "Majukan warehouse Anda.",
+      "heroDescription": "Satu ruang kerja untuk mengelola inventori, pesanan, dan operasional gudang Anda.",
+      "welcomeTitle": "Selamat datang kembali",
+      "welcomeDescription": "Masuk untuk melanjutkan ke dashboard Anda.",
+      "username": "Username",
+      "usernamePlaceholder": "Masukkan username",
+      "password": "Password",
+      "passwordPlaceholder": "Masukkan password",
+      "showPassword": "Tampilkan password",
+      "hidePassword": "Sembunyikan password",
+      "submit": "Masuk",
+      "loginError": "Gagal login",
+      "loginErrorDescription": "Username atau password yang Anda masukkan tidak sesuai.",
+      "footer": "Operasional warehouse menjadi lebih sederhana."
+   }
+}
