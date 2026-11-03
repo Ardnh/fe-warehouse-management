@@ -15,11 +15,6 @@ const authSchema = computed(() =>
    })
 )
 
-// const localeOptions = [
-//    { label: 'Bahasa Indonesia', value: 'id' },
-//    { label: 'English', value: 'en' },
-// ]
-
 useHead({
    title: () => t('auth.pageTitle'),
 })
