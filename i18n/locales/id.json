@@ -8,6 +8,7 @@
       "welcomeDescription": "Masuk untuk melanjutkan ke dashboard Anda.",
       "username": "Username",
       "usernamePlaceholder": "Masukkan username",
+      "usernameInputError": "Username wajib diisi",
       "password": "Password",
       "passwordPlaceholder": "Masukkan password",
       "showPassword": "Tampilkan password",

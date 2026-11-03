@@ -1,17 +1,24 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
+import * as z from 'zod'
 
-import { authSchema } from '~/utils'
 import type { AuthSchema } from '~/utils/schemas/auth.schema'
 
 const store = useAuthStore()
 const toast = useToast()
-const { t, locale } = useI18n()
+const { t, locale, setLocale, locales } = useI18n()
 
-const localeOptions = [
-   { label: 'Bahasa Indonesia', value: 'id' },
-   { label: 'English', value: 'en' },
-]
+const authSchema = computed(() =>
+   z.object({
+      username: z.string().min(1, t('auth.usernameInputError')),
+      password: z.string().min(1, t('auth.passwordInputError')),
+   })
+)
+
+// const localeOptions = [
+//    { label: 'Bahasa Indonesia', value: 'id' },
+//    { label: 'English', value: 'en' },
+// ]
 
 useHead({
    title: () => t('auth.pageTitle'),
@@ -62,7 +69,16 @@ async function onSubmit(event: FormSubmitEvent<AuthSchema>) {
          </section>
 
          <section class="relative flex items-center justify-center px-6 py-12 sm:px-10 lg:px-16">
-            <USelect v-model="locale" :items="localeOptions" value-key="value" size="sm" class="absolute right-6 top-6 w-36" aria-label="Language" />
+            <USelect
+               :model-value="locale"
+               :items="locales"
+               label-key="name"
+               value-key="code"
+               size="sm"
+               class="absolute right-6 top-6 w-36"
+               aria-label="Language"
+               @update:model-value="(value) => setLocale(value)"
+            />
             <div class="w-full max-w-md">
                <div class="mb-10 lg:hidden">
                   <div class="flex items-center gap-3 text-white">
