@@ -99,8 +99,7 @@ function onDelete(zone: Zone) {
 }
 function onView(zone: Zone) {
    const id = zone.id
-   const warehouseId = zone.warehouse_id
-   router.push(`/dashboard/warehouse/${warehouseId}/zones/${id}`)
+   router.push(`/dashboard/zones/${id}`)
 }
 
 function closeForm() {
